@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# If the app lives in a subfolder (e.g. http://localhost/worldcuppoll/),
+# uncomment and set the folder name:
+# RewriteBase /worldcuppoll
+
+# Block direct access to application internals
+RewriteRule ^(app|bootstrap|config|db|routes|vendor)(/|$) - [F,L]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
