@@ -239,9 +239,76 @@ body.player-app {
     opacity: 0.5;
 }
 
+/* Mobile navigation (offcanvas) */
+.player-app .app-header .navbar,
+.admin-app .admin-topbar .navbar {
+    background: linear-gradient(90deg, var(--pool-green-dark), var(--pool-green)) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-offcanvas,
+.admin-offcanvas {
+    background: linear-gradient(180deg, var(--pool-green-dark), #063d22);
+    max-width: min(280px, 85vw);
+}
+
+.app-offcanvas .offcanvas-body,
+.admin-offcanvas .offcanvas-body {
+    padding-top: 0.5rem;
+}
+
+.app-mobile-nav .nav-link,
+.admin-sidebar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.15rem;
+}
+
+.app-mobile-nav .nav-link:hover,
+.app-mobile-nav .nav-link.active,
+.admin-sidebar-nav .nav-link:hover,
+.admin-sidebar-nav .nav-link.active {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--pool-gold);
+}
+
+.admin-sidebar {
+    background: #212529;
+    min-height: calc(100vh - 0px);
+    border-radius: 0;
+}
+
+.admin-app .admin-main {
+    min-width: 0;
+}
+
+.player-app .app-main {
+    min-width: 0;
+}
+
+/* Desktop: compact top bar only */
+@media (min-width: 992px) {
+    .player-app .navbar-nav-wrap .nav-link {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .player-app .app-main,
+    .admin-app .admin-main {
+        padding-top: 0.75rem !important;
+    }
+}
+
 @media (max-width: 576px) {
     .match-card__team img {
         width: 40px;
         height: 28px;
+    }
+
+    .stats-strip {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
