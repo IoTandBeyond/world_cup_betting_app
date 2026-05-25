@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Services\Auth;
+use App\Services\OnboardingService;
 
 class AdminMiddleware
 {
@@ -15,17 +16,11 @@ class AdminMiddleware
             exit;
         }
 
+        OnboardingService::enforce();
+
         if (!Auth::isAdmin()) {
             http_response_code(403);
             die('403 Forbidden');
-        }
-
-        if (
-            Auth::mustChangePassword()
-            && request_path() !== '/password/change'
-        ) {
-            header('Location: ' . url('/password/change'));
-            exit;
         }
     }
 }

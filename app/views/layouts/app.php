@@ -30,7 +30,7 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
 </head>
 <body class="player-app">
 <header class="app-header sticky-top">
-    <nav class="navbar navbar-dark bg-pool-nav">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-pool-nav">
         <div class="container">
             <a class="navbar-brand fw-bold" href="<?= url('/dashboard') ?>">
                 <i class="fa fa-trophy text-warning me-1"></i>
@@ -47,25 +47,23 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="d-none d-lg-flex navbar-nav-wrap ms-auto">
-                <ul class="navbar-nav me-3">
+            <div class="collapse navbar-collapse justify-content-lg-end d-none d-lg-flex">
+                <ul class="navbar-nav align-items-lg-center">
                     <?php foreach ($navItems as $path => $item): ?>
                         <li class="nav-item">
                             <?= $navLink($path, $item) ?>
                         </li>
                     <?php endforeach; ?>
-                </ul>
-                <ul class="navbar-nav align-items-center">
                     <?php if (!empty($user)): ?>
                         <li class="nav-item">
-                            <span class="nav-link py-2">
+                            <span class="nav-link py-lg-2 text-nowrap">
                                 <i class="fa fa-user-circle me-1"></i><?= e($user['name']) ?>
                             </span>
                         </li>
                     <?php endif; ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?= url('/logout') ?>">
-                            <i class="fa fa-sign-out-alt me-1"></i> Logout
+                        <a class="nav-link text-nowrap" href="<?= url('/logout') ?>">
+                            <i class="fa fa-sign-out-alt me-1"></i>Logout
                         </a>
                     </li>
                 </ul>

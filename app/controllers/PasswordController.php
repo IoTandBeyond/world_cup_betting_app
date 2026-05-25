@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\Auth;
 use App\Services\Csrf;
 use App\Services\Flash;
+use App\Services\OnboardingService;
 
 class PasswordController extends Controller
 {
@@ -20,8 +21,12 @@ class PasswordController extends Controller
 
         $user = Auth::user();
 
+        if (!User::hasAcceptedPolicy($user)) {
+            $this->redirect('/policy/accept');
+        }
+
         if (!(int) ($user['must_change_password'] ?? 0)) {
-            $this->redirect(Auth::isAdmin() ? '/admin' : '/dashboard');
+            $this->redirect(OnboardingService::redirectAfterLogin());
         }
 
         $this->view('auth/change_password', [

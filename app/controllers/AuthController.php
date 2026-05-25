@@ -8,13 +8,14 @@ use App\Helpers\Validator;
 use App\Services\Auth;
 use App\Services\Csrf;
 use App\Services\Flash;
+use App\Services\OnboardingService;
 
 class AuthController extends Controller
 {
     public function loginForm(): void
     {
         if (Auth::check()) {
-            $this->redirect('/dashboard');
+            $this->redirect(OnboardingService::redirectAfterLogin());
         }
 
         $this->view('auth/login', [
@@ -35,16 +36,16 @@ class AuthController extends Controller
         }
 
         if (Auth::attempt($email, $password)) {
-            if (Auth::mustChangePassword()) {
+            if (!\App\Models\User::hasAcceptedPolicy(Auth::user())) {
                 Flash::set(
                     'success',
-                    'Please create a new password to continue.'
+                    'Please review and accept the Rules & Policy to continue.'
                 );
-                $this->redirect('/password/change');
+            } elseif (Auth::mustChangePassword()) {
+                Flash::set('success', 'Please create your new password to continue.');
             }
 
-            $target = Auth::isAdmin() ? '/admin' : '/dashboard';
-            $this->redirect($target);
+            $this->redirect(OnboardingService::redirectAfterLogin());
         }
 
         Flash::set('error', 'Invalid credentials or inactive account.');

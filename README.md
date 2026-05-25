@@ -109,7 +109,12 @@ MAIL_PASSWORD=...
 MAIL_ENCRYPTION=tls
 ```
 
-For existing databases, run: `mysql ... < db/migrations/001_must_change_password.sql`
+For existing databases, run migrations:
+
+```bash
+mysql -u root -p world_cup_poll_db < db/migrations/001_must_change_password.sql
+mysql -u root -p world_cup_poll_db < db/migrations/002_policy_acceptance.sql
+```
 
 ## Usage
 

@@ -95,6 +95,33 @@ class User
         return $user && (int) $user['must_change_password'] === 1;
     }
 
+    public static function hasAcceptedPolicy(?array $user): bool
+    {
+        if (!$user || empty($user['policy_accepted_at'])) {
+            return false;
+        }
+
+        return ($user['policy_version'] ?? '') === \App\Services\PolicyService::currentVersion();
+    }
+
+    public static function recordPolicyAcceptance(int $id, string $version): void
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            UPDATE users
+            SET policy_accepted_at = NOW(),
+                policy_version = :version,
+                updated_at = NOW()
+            WHERE id = :id
+        ');
+
+        $stmt->execute([
+            'id' => $id,
+            'version' => $version,
+        ]);
+    }
+
     public static function updateLastLogin(int $id): void
     {
         $db = Database::connection();
@@ -112,6 +139,7 @@ class User
 
         return $db->query('
             SELECT id, name, email, role, is_active, must_change_password,
+                   policy_accepted_at, policy_version,
                    last_login_at, created_at
             FROM users
             ORDER BY name ASC

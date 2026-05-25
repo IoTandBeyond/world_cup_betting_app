@@ -329,9 +329,15 @@ body.player-app {
     min-width: 0;
 }
 
-/* Desktop: compact top bar only */
+/* Desktop: horizontal top nav (navbar-expand-lg handles flex-direction) */
 @media (min-width: 992px) {
-    .player-app .navbar-nav-wrap .nav-link {
+    .player-app .app-header .navbar-collapse .navbar-nav {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 0.15rem;
+    }
+
+    .player-app .app-header .navbar-collapse .nav-link {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
     }
@@ -342,6 +348,25 @@ body.player-app {
     .admin-app .admin-main {
         padding-top: 0.75rem !important;
     }
+}
+
+/* Policy acceptance page */
+.policy-page .policy-scroll {
+    max-height: min(55vh, 480px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.policy-page .policy-document h2 {
+    color: var(--pool-green-dark);
+    margin-top: 1rem;
+}
+
+.policy-page .policy-accept-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    background: #fff;
 }
 
 @media (max-width: 576px) {

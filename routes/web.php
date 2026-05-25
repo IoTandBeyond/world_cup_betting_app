@@ -4,6 +4,7 @@ use App\Controllers\AdminController;
 use App\Controllers\AuthController;
 use App\Controllers\BonusController;
 use App\Controllers\PasswordController;
+use App\Controllers\PolicyController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Controllers\LeaderboardController;
@@ -20,6 +21,8 @@ $router->get('/', [HomeController::class, 'index']);
 $router->get('/login', [AuthController::class, 'loginForm']);
 $router->post('/login', [AuthController::class, 'login']);
 $router->get('/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]);
+$router->get('/policy/accept', [PolicyController::class, 'acceptForm'], [AuthMiddleware::class]);
+$router->post('/policy/accept', [PolicyController::class, 'accept'], [AuthMiddleware::class]);
 $router->get('/password/change', [PasswordController::class, 'changeForm'], [AuthMiddleware::class]);
 $router->post('/password/change', [PasswordController::class, 'change'], [AuthMiddleware::class]);
 

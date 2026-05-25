@@ -11,6 +11,8 @@ CREATE TABLE users (
     role ENUM('admin', 'user') DEFAULT 'user',
     is_active TINYINT(1) DEFAULT 1,
     must_change_password TINYINT(1) NOT NULL DEFAULT 0,
+    policy_accepted_at DATETIME NULL,
+    policy_version VARCHAR(20) NULL,
     last_login_at DATETIME NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

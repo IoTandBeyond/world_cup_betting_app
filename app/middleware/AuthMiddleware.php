@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Services\Auth;
+use App\Services\OnboardingService;
 
 class AuthMiddleware
 {
@@ -15,14 +16,6 @@ class AuthMiddleware
             exit;
         }
 
-        $path = request_path();
-
-        if (
-            Auth::mustChangePassword()
-            && $path !== '/password/change'
-        ) {
-            header('Location: ' . url('/password/change'));
-            exit;
-        }
+        OnboardingService::enforce();
     }
 }

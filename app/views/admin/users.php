@@ -11,6 +11,7 @@ ob_start();
                 <th>Email</th>
                 <th>Role</th>
                 <th>Status</th>
+                <th>Policy</th>
                 <th></th>
             </tr>
         </thead>
@@ -22,6 +23,16 @@ ob_start();
                     <td><?= e($u['role']) ?></td>
                     <td>
                         <?= (int) $u['is_active'] ? 'Active' : 'Inactive' ?>
+                    </td>
+                    <td class="small">
+                        <?php if (!empty($u['policy_accepted_at'])): ?>
+                            <?= e($u['policy_accepted_at']) ?>
+                            <?php if (!empty($u['policy_version'])): ?>
+                                <br><span class="text-muted">v<?= e($u['policy_version']) ?></span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="text-warning">Pending</span>
+                        <?php endif; ?>
                     </td>
                     <td>
                         <?php if ($u['role'] !== 'admin'): ?>
