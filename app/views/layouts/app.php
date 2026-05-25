@@ -20,7 +20,9 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#094d2a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title><?= e($title ?? 'World Cup Pool') ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -28,7 +30,7 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
 </head>
 <body class="player-app">
 <header class="app-header sticky-top">
-    <nav class="navbar navbar-dark">
+    <nav class="navbar navbar-dark bg-pool-nav">
         <div class="container">
             <a class="navbar-brand fw-bold" href="<?= url('/dashboard') ?>">
                 <i class="fa fa-trophy text-warning me-1"></i>

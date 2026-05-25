@@ -11,9 +11,57 @@ body.player-app {
     min-height: 100vh;
 }
 
-.player-app .navbar {
-    background: linear-gradient(90deg, var(--pool-green-dark), var(--pool-green)) !important;
+/* Top bar — explicit colors for iOS Safari (avoids white/transparent header) */
+.bg-pool-nav,
+.player-app .app-header,
+.admin-app .admin-topbar {
+    background-color: var(--pool-green-dark) !important;
+    background-image: linear-gradient(
+        90deg,
+        var(--pool-green-dark),
+        var(--pool-green)
+    ) !important;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.player-app .app-header,
+.admin-app .admin-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    padding-top: env(safe-area-inset-top, 0);
+}
+
+.player-app .app-header .navbar,
+.admin-app .admin-topbar .navbar {
+    --bs-navbar-color: rgba(255, 255, 255, 0.92);
+    --bs-navbar-hover-color: #ffffff;
+    --bs-navbar-active-color: var(--pool-gold);
+    --bs-navbar-brand-color: #ffffff;
+    --bs-navbar-brand-hover-color: #ffffff;
+    --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.55);
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.95%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background: transparent !important;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.player-app .app-header .navbar-brand,
+.admin-app .admin-topbar .navbar-brand {
+    color: #ffffff !important;
+}
+
+.player-app .app-header .navbar-toggler,
+.admin-app .admin-topbar .navbar-toggler {
+    color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.player-app .app-header .navbar-toggler:focus,
+.admin-app .admin-topbar .navbar-toggler:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.35);
 }
 
 .player-app .nav-link.active {
@@ -240,12 +288,6 @@ body.player-app {
 }
 
 /* Mobile navigation (offcanvas) */
-.player-app .app-header .navbar,
-.admin-app .admin-topbar .navbar {
-    background: linear-gradient(90deg, var(--pool-green-dark), var(--pool-green)) !important;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-}
-
 .app-offcanvas,
 .admin-offcanvas {
     background: linear-gradient(180deg, var(--pool-green-dark), #063d22);

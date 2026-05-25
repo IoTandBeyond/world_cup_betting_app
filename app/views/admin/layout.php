@@ -23,7 +23,9 @@ $adminNavLink = static function (string $path, array $item) use ($adminPath): st
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#094d2a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title><?= e($title ?? 'Admin') ?> — World Cup Pool</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -31,7 +33,7 @@ $adminNavLink = static function (string $path, array $item) use ($adminPath): st
 </head>
 <body class="admin-app bg-light">
 <header class="admin-topbar sticky-top d-lg-none">
-    <nav class="navbar navbar-dark">
+    <nav class="navbar navbar-dark bg-pool-nav">
         <div class="container-fluid">
             <span class="navbar-brand mb-0 h6">
                 <i class="fa fa-shield-halved me-1"></i> Admin
