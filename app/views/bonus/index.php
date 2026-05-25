@@ -28,7 +28,7 @@ ob_start();
                             <?php foreach ($teams as $t): ?>
                                 <option value="<?= (int) $t['id'] ?>"
                                     <?= ($bonus['world_cup_winner_team_id'] ?? '') == $t['id'] ? 'selected' : '' ?>>
-                                    <?= e($t['name']) ?> (<?= e($t['fifa_code']) ?>)
+                                    <?= e($t['name']) ?> (<?= e($t['short_name']) ?>)
                                 </option>
                             <?php endforeach; ?>
                         </select>
