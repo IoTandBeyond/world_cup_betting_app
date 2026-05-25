@@ -83,18 +83,23 @@ RewriteBase /worldcuppoll
 | App in a subfolder | Set `APP_BASE_PATH` and `RewriteBase` (see Option C) |
 | `mod_rewrite` off | Enable rewrite or use the PHP built-in server |
 
-## Troubleshooting blank page / “Class not found”
+## Deploy (git pull on the server)
 
-Linux hosting is **case-sensitive**. New PHP classes under `app/` are registered via Composer’s **classmap**. After adding or updating app code, run on the server:
+If pull fails with *“would be overwritten by merge”* on `vendor/composer/autoload_*.php`, the server has local Composer changes. Reset those files, then pull:
 
 ```bash
-cd /path/to/worldcuppoll
-composer dump-autoload -o
+cd /home/pnpw2418/test.worldcup.iot4b.ca
+git checkout -- vendor/composer/autoload_classmap.php vendor/composer/autoload_static.php
+git pull
 ```
 
-Also confirm new files were uploaded (e.g. `app/services/OnboardingService.php`, `app/services/PolicyService.php`, `app/controllers/PolicyController.php`).
+`bootstrap/autoload_app.php` loads `App\*` classes from `app/` even when the classmap is old, so you do **not** need to run `composer dump-autoload` on every deploy (optional after large refactors).
 
-If you deploy without SSH, upload the updated `vendor/composer/autoload_classmap.php` and `autoload_static.php` from your dev machine after running `composer dump-autoload -o` locally.
+## Troubleshooting blank page / “Class not found”
+
+Confirm new PHP files exist on the server (e.g. `app/services/OnboardingService.php`). Pull the latest code including `bootstrap/autoload_app.php`.
+
+If problems persist, run `composer dump-autoload -o` on the server once (then use `git checkout --` on those two vendor files before the next pull if Git complains again).
 
 ## Tournament & teams
 
@@ -115,12 +120,14 @@ Configure `.env`:
 ```
 MAIL_FROM_ADDRESS=no-reply@iot4b.ca
 MAIL_FROM_NAME=World Cup Pool
-MAIL_HOST=smtp.your-provider.com
+MAIL_HOST=mail.iot4b.ca
 MAIL_PORT=587
-MAIL_USERNAME=...
-MAIL_PASSWORD=...
+MAIL_USERNAME=no-reply@iot4b.ca
+MAIL_PASSWORD=your-mailbox-password
 MAIL_ENCRYPTION=tls
 ```
+
+Use **`mail.iot4b.ca`**, not `smtp.iot4b.ca` — the latter has no DNS record (`NXDOMAIN`). Create the `no-reply@iot4b.ca` mailbox in your hosting panel and use that password for `MAIL_USERNAME` / `MAIL_PASSWORD`.
 
 For existing databases, run migrations:
 
