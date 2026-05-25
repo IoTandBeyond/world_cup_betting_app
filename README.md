@@ -83,6 +83,19 @@ RewriteBase /worldcuppoll
 | App in a subfolder | Set `APP_BASE_PATH` and `RewriteBase` (see Option C) |
 | `mod_rewrite` off | Enable rewrite or use the PHP built-in server |
 
+## Troubleshooting blank page / “Class not found”
+
+Linux hosting is **case-sensitive**. New PHP classes under `app/` are registered via Composer’s **classmap**. After adding or updating app code, run on the server:
+
+```bash
+cd /path/to/worldcuppoll
+composer dump-autoload -o
+```
+
+Also confirm new files were uploaded (e.g. `app/services/OnboardingService.php`, `app/services/PolicyService.php`, `app/controllers/PolicyController.php`).
+
+If you deploy without SSH, upload the updated `vendor/composer/autoload_classmap.php` and `autoload_static.php` from your dev machine after running `composer dump-autoload -o` locally.
+
 ## Tournament & teams
 
 See **[docs/TOURNAMENT_SETUP.md](docs/TOURNAMENT_SETUP.md)** for the full procedure.
