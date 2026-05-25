@@ -20,6 +20,7 @@ $router->get('/', [HomeController::class, 'index']);
 
 $router->get('/login', [AuthController::class, 'loginForm']);
 $router->post('/login', [AuthController::class, 'login']);
+$router->get('/invite/{token}', [AuthController::class, 'invite']);
 $router->get('/logout', [AuthController::class, 'logout'], [AuthMiddleware::class]);
 $router->get('/policy/accept', [PolicyController::class, 'acceptForm'], [AuthMiddleware::class]);
 $router->post('/policy/accept', [PolicyController::class, 'accept'], [AuthMiddleware::class]);

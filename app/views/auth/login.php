@@ -28,17 +28,27 @@
                         <?= \App\Services\Csrf::field() ?>
                         <div class="mb-3">
                             <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" required autocomplete="email">
+                            <input type="email"
+                                   name="email"
+                                   class="form-control"
+                                   value="<?= e($prefillEmail ?? '') ?>"
+                                   required
+                                   autocomplete="email">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" name="password" class="form-control" required>
+                            <label class="form-label">Temporary password</label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control font-monospace"
+                                   required
+                                   autocomplete="current-password"
+                                   placeholder="XXXX-XXXX-XXXX">
                         </div>
                         <button type="submit" class="btn btn-pool w-100">Log in</button>
                     </form>
                     <p class="text-muted small mt-3 mb-0 text-center">
-                        Invitation only. Use the temporary password from your email;
-                        you will set a new password on first login.
+                        Use the <strong>temporary password</strong> from your invitation email
+                        (not the long link token). You will accept the rules and set a new password on first login.
                     </p>
                 </div>
             </div>

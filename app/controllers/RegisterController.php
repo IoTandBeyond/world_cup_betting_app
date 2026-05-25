@@ -17,8 +17,21 @@ class RegisterController extends Controller
     {
         $invitation = Invitation::findByToken($token);
 
-        if (!Invitation::isValid($invitation)) {
+        if (!$invitation || !Invitation::allowsLoginAssist($invitation)) {
             Flash::set('error', 'This invitation is invalid or has expired.');
+            $this->redirect('/login');
+        }
+
+        if (User::findByEmail($invitation['email'])) {
+            Flash::set(
+                'success',
+                'Your account is already set up. Log in with the temporary password from your email.'
+            );
+            $this->redirect('/login?email=' . rawurlencode($invitation['email']));
+        }
+
+        if (!Invitation::isValid($invitation)) {
+            Flash::set('error', 'This invitation has already been used.');
             $this->redirect('/login');
         }
 

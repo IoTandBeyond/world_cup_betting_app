@@ -12,6 +12,7 @@ class User
     public static function findByEmail(string $email): ?array
     {
         $db = Database::connection();
+        $email = strtolower(trim($email));
 
         $stmt = $db->prepare('
             SELECT * FROM users

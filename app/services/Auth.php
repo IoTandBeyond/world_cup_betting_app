@@ -12,6 +12,8 @@ class Auth
         string $email,
         string $password
     ): bool {
+        $email = strtolower(trim($email));
+        $password = trim($password);
         $user = User::findByEmail($email);
 
         if (!$user || !(int) $user['is_active']) {

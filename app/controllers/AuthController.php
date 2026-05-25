@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Helpers\Validator;
+use App\Models\Invitation;
+use App\Models\User;
 use App\Services\Auth;
 use App\Services\Csrf;
 use App\Services\Flash;
@@ -18,17 +20,46 @@ class AuthController extends Controller
             $this->redirect(OnboardingService::redirectAfterLogin());
         }
 
+        $prefillEmail = strtolower(trim($_GET['email'] ?? ''));
+
+        if ($prefillEmail !== '' && !Validator::email($prefillEmail)) {
+            $prefillEmail = '';
+        }
+
         $this->view('auth/login', [
             'error' => Flash::get('error'),
+            'prefillEmail' => $prefillEmail,
         ]);
+    }
+
+    public function invite(string $token): void
+    {
+        $invitation = Invitation::findByToken($token);
+
+        if (!Invitation::allowsLoginAssist($invitation)) {
+            Flash::set('error', 'This invitation link is invalid or has expired.');
+            $this->redirect('/login');
+        }
+
+        $email = $invitation['email'];
+
+        if (User::findByEmail($email)) {
+            Flash::set(
+                'success',
+                'Your account is ready. Sign in with the temporary password from your email (format XXXX-XXXX-XXXX).'
+            );
+            $this->redirect('/login?email=' . rawurlencode($email));
+        }
+
+        $this->redirect('/register/' . $token);
     }
 
     public function login(): void
     {
         Csrf::validateOrAbort();
 
-        $email = trim($_POST['email'] ?? '');
-        $password = $_POST['password'] ?? '';
+        $email = strtolower(trim($_POST['email'] ?? ''));
+        $password = trim($_POST['password'] ?? '');
 
         if (!Validator::email($email) || !Validator::required($password)) {
             Flash::set('error', 'Please enter a valid email and password.');

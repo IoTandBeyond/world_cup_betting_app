@@ -80,4 +80,15 @@ class Invitation
 
         return strtotime($invitation['expires_at']) > time();
     }
+
+    /** Link from email: valid while not expired (even after account was created). */
+    public static function allowsLoginAssist(?array $invitation): bool
+    {
+        if (!$invitation) {
+            return false;
+        }
+
+        return strtotime($invitation['expires_at']) > time();
+    }
+
 }

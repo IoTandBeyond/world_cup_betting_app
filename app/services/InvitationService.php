@@ -26,45 +26,54 @@ class InvitationService
         $expiresAt = date('Y-m-d H:i:s', strtotime('+7 days'));
         $tempPassword = self::generateTempPassword();
         $displayName = self::resolveName($email, $name);
-
-        Invitation::create($email, $token, $invitedBy, $expiresAt);
-
-        $userId = User::create([
-            'name' => $displayName,
-            'email' => $email,
-            'password' => $tempPassword,
-            'must_change_password' => true,
-        ]);
-
-        Invitation::markUsed(
-            (int) Invitation::findByToken($token)['id']
-        );
-
-        $loginUrl = absolute_url('/login');
         $appName = $_ENV['APP_NAME'] ?? 'World Cup Pool';
+        $loginUrl = self::inviteLink($token);
 
-        $html = self::buildInvitationEmailHtml(
-            $displayName,
-            $email,
-            $tempPassword,
-            $loginUrl,
-            $appName
-        );
+        $db = Database::connection();
+        $db->beginTransaction();
 
-        $text = self::buildInvitationEmailText(
-            $displayName,
-            $email,
-            $tempPassword,
-            $loginUrl,
-            $appName
-        );
+        $invitationId = null;
+        $userId = null;
 
-        MailService::send(
-            $email,
-            "Your {$appName} account is ready",
-            $html,
-            $text
-        );
+        try {
+            $invitationId = Invitation::create($email, $token, $invitedBy, $expiresAt);
+
+            $userId = User::create([
+                'name' => $displayName,
+                'email' => $email,
+                'password' => $tempPassword,
+                'must_change_password' => true,
+            ]);
+
+            $html = self::buildInvitationEmailHtml(
+                $displayName,
+                $email,
+                $tempPassword,
+                $loginUrl,
+                $appName
+            );
+
+            $text = self::buildInvitationEmailText(
+                $displayName,
+                $email,
+                $tempPassword,
+                $loginUrl,
+                $appName
+            );
+
+            MailService::send(
+                $email,
+                "Your {$appName} account is ready",
+                $html,
+                $text
+            );
+
+            Invitation::markUsed($invitationId);
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
 
         return [
             'email' => $email,
@@ -128,10 +137,10 @@ class InvitationService
     <p>Sign in with these credentials:</p>
     <table cellpadding="8" style="background:#f4f6f8;border-radius:8px;">
         <tr><td><strong>Email</strong></td><td>{$safeEmail}</td></tr>
-        <tr><td><strong>Temporary password</strong></td><td><code style="font-size:16px;">{$safePass}</code></td></tr>
+        <tr><td><strong>Temporary password</strong></td><td><code style="font-size:16px;letter-spacing:1px;">{$safePass}</code></td></tr>
     </table>
-    <p><a href="{$safeUrl}" style="display:inline-block;padding:10px 18px;background:#0d6b3a;color:#fff;text-decoration:none;border-radius:6px;">Log in now</a></p>
-    <p><strong>Important:</strong> You will be asked to create a new password on your first login. This temporary password will stop working after that.</p>
+    <p><a href="{$safeUrl}" style="display:inline-block;padding:10px 18px;background:#0d6b3a;color:#fff;text-decoration:none;border-radius:6px;">Open sign-in page</a></p>
+    <p><strong>Important:</strong> Use the <strong>temporary password</strong> above (not the link token). You will accept the rules and set a new password on first login.</p>
     <p style="color:#666;font-size:12px;">If you did not expect this email, you can ignore it.</p>
 </body>
 </html>
@@ -153,16 +162,17 @@ You have been invited to join {$appName}.
 Email: {$email}
 Temporary password: {$tempPassword}
 
-Log in: {$loginUrl}
+Sign-in page: {$loginUrl}
 
-You must create a new password on your first login.
+Use the temporary password above to log in (not the long token in the URL).
+You must accept the rules and create a new password on your first login.
 
 TEXT;
     }
 
     public static function inviteLink(string $token): string
     {
-        return absolute_url('/register/' . $token);
+        return absolute_url('/invite/' . $token);
     }
 
     public static function validateForRegistration(
@@ -180,7 +190,7 @@ TEXT;
         }
 
         if (User::findByEmail($email)) {
-            return 'Your account was already created. Check your email and log in.';
+            return 'Your account was already created. Use the temporary password from your email to log in.';
         }
 
         return null;
