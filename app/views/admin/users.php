@@ -34,8 +34,20 @@ ob_start();
                             <span class="text-warning">Pending</span>
                         <?php endif; ?>
                     </td>
-                    <td>
+                    <td class="text-nowrap">
                         <?php if ($u['role'] !== 'admin'): ?>
+                            <form method="POST"
+                                  action="<?= url('/admin/users/resend-password') ?>"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Send a new temporary password? Their current password will stop working.');">
+                                <?= \App\Services\Csrf::field() ?>
+                                <input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-primary"
+                                        <?= (int) $u['is_active'] ? '' : 'disabled title="Activate user first"' ?>>
+                                    <i class="fa fa-envelope me-1"></i>Resend password
+                                </button>
+                            </form>
                             <form method="POST" action="<?= url('/admin/users/toggle') ?>" class="d-inline">
                                 <?= \App\Services\Csrf::field() ?>
                                 <input type="hidden" name="user_id" value="<?= (int) $u['id'] ?>">

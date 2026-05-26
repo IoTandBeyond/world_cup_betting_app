@@ -41,6 +41,7 @@ $router->get('/admin/invitations', [AdminController::class, 'invitations'], [Adm
 $router->post('/admin/invitations', [AdminController::class, 'storeInvitation'], [AdminMiddleware::class]);
 $router->get('/admin/users', [AdminController::class, 'users'], [AdminMiddleware::class]);
 $router->post('/admin/users/toggle', [AdminController::class, 'toggleUser'], [AdminMiddleware::class]);
+$router->post('/admin/users/resend-password', [AdminController::class, 'resendTemporaryPassword'], [AdminMiddleware::class]);
 $router->get('/admin/tournament', [AdminController::class, 'tournament'], [AdminMiddleware::class]);
 $router->post('/admin/tournament', [AdminController::class, 'storeTournament'], [AdminMiddleware::class]);
 $router->post('/admin/tournament/activate', [AdminController::class, 'activateTournament'], [AdminMiddleware::class]);

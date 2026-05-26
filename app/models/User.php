@@ -89,6 +89,24 @@ class User
         ]);
     }
 
+    public static function setTemporaryPassword(int $id, string $password): void
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            UPDATE users
+            SET password_hash = :password_hash,
+                must_change_password = 1,
+                updated_at = NOW()
+            WHERE id = :id
+        ');
+
+        $stmt->execute([
+            'id' => $id,
+            'password_hash' => password_hash($password, PASSWORD_BCRYPT),
+        ]);
+    }
+
     public static function mustChangePassword(int $id): bool
     {
         $user = self::findById($id);

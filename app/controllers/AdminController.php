@@ -98,6 +98,41 @@ class AdminController extends Controller
         $this->redirect('/admin/users');
     }
 
+    public function resendTemporaryPassword(): void
+    {
+        Csrf::validateOrAbort();
+
+        $id = (int) ($_POST['user_id'] ?? 0);
+        $admin = Auth::user();
+
+        if (!$id || $id === (int) $admin['id']) {
+            Flash::set('error', 'Invalid user.');
+            $this->redirect('/admin/users');
+        }
+
+        try {
+            $result = InvitationService::resendTemporaryPassword(
+                $id,
+                (int) $admin['id']
+            );
+
+            Flash::set(
+                'success',
+                'New temporary password emailed to ' . $result['email'] . '.'
+            );
+        } catch (\InvalidArgumentException $e) {
+            Flash::set('error', $e->getMessage());
+        } catch (\Throwable $e) {
+            Flash::set(
+                'error',
+                'Could not send email: ' . $e->getMessage()
+                . ' Check MAIL_* settings in .env.'
+            );
+        }
+
+        $this->redirect('/admin/users');
+    }
+
     public function matches(): void
     {
         $tournament = Tournament::active();

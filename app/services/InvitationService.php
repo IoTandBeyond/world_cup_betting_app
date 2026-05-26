@@ -84,6 +84,84 @@ class InvitationService
         ];
     }
 
+    public static function resendTemporaryPassword(int $userId, int $invitedBy): array
+    {
+        $user = User::findById($userId);
+
+        if (!$user) {
+            throw new \InvalidArgumentException('User not found.');
+        }
+
+        if ($user['role'] === 'admin') {
+            throw new \InvalidArgumentException(
+                'Cannot reset the password for an admin account this way.'
+            );
+        }
+
+        if (!(int) $user['is_active']) {
+            throw new \InvalidArgumentException(
+                'User is inactive. Activate the account before resending a password.'
+            );
+        }
+
+        $email = strtolower(trim($user['email']));
+        $displayName = $user['name'];
+        $tempPassword = self::generateTempPassword();
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+7 days'));
+        $loginUrl = self::inviteLink($token);
+        $appName = $_ENV['APP_NAME'] ?? 'World Cup Pool';
+
+        $db = Database::connection();
+        $db->beginTransaction();
+
+        try {
+            User::setTemporaryPassword($userId, $tempPassword);
+
+            $invitationId = Invitation::create(
+                $email,
+                $token,
+                $invitedBy,
+                $expiresAt
+            );
+
+            $html = self::buildResendEmailHtml(
+                $displayName,
+                $email,
+                $tempPassword,
+                $loginUrl,
+                $appName
+            );
+
+            $text = self::buildResendEmailText(
+                $displayName,
+                $email,
+                $tempPassword,
+                $loginUrl,
+                $appName
+            );
+
+            MailService::send(
+                $email,
+                "Your {$appName} temporary password",
+                $html,
+                $text
+            );
+
+            Invitation::markUsed($invitationId);
+            $db->commit();
+        } catch (\Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
+
+        return [
+            'email' => $email,
+            'user_id' => $userId,
+            'login_url' => $loginUrl,
+        ];
+    }
+
     public static function generateTempPassword(): string
     {
         $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -173,6 +251,60 @@ TEXT;
     public static function inviteLink(string $token): string
     {
         return absolute_url('/invite/' . $token);
+    }
+
+    private static function buildResendEmailHtml(
+        string $name,
+        string $email,
+        string $tempPassword,
+        string $loginUrl,
+        string $appName
+    ): string {
+        $safeName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+        $safeEmail = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+        $safePass = htmlspecialchars($tempPassword, ENT_QUOTES, 'UTF-8');
+        $safeUrl = htmlspecialchars($loginUrl, ENT_QUOTES, 'UTF-8');
+        $safeApp = htmlspecialchars($appName, ENT_QUOTES, 'UTF-8');
+
+        return <<<HTML
+<!DOCTYPE html>
+<html>
+<body style="font-family:Arial,sans-serif;line-height:1.5;color:#222;">
+    <p>Hi {$safeName},</p>
+    <p>An administrator has issued a new <strong>temporary password</strong> for your <strong>{$safeApp}</strong> account.</p>
+    <p>Sign in with:</p>
+    <table cellpadding="8" style="background:#f4f6f8;border-radius:8px;">
+        <tr><td><strong>Email</strong></td><td>{$safeEmail}</td></tr>
+        <tr><td><strong>New temporary password</strong></td><td><code style="font-size:16px;letter-spacing:1px;">{$safePass}</code></td></tr>
+    </table>
+    <p><a href="{$safeUrl}" style="display:inline-block;padding:10px 18px;background:#0d6b3a;color:#fff;text-decoration:none;border-radius:6px;">Open sign-in page</a></p>
+    <p><strong>Important:</strong> Your previous password no longer works. Use the new temporary password above. You will be asked to set a new personal password after you sign in if required.</p>
+    <p style="color:#666;font-size:12px;">If you did not request this, contact the pool organizer.</p>
+</body>
+</html>
+HTML;
+    }
+
+    private static function buildResendEmailText(
+        string $name,
+        string $email,
+        string $tempPassword,
+        string $loginUrl,
+        string $appName
+    ): string {
+        return <<<TEXT
+Hi {$name},
+
+A new temporary password was issued for your {$appName} account.
+
+Email: {$email}
+New temporary password: {$tempPassword}
+
+Sign-in page: {$loginUrl}
+
+Your previous password no longer works. Use the new temporary password above to log in.
+
+TEXT;
     }
 
     public static function validateForRegistration(
