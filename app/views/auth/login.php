@@ -36,13 +36,12 @@
                                    autocomplete="email">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Temporary password</label>
+                            <label class="form-label">Password</label>
                             <input type="password"
                                    name="password"
                                    class="form-control font-monospace"
                                    required
-                                   autocomplete="current-password"
-                                   placeholder="XXXX-XXXX-XXXX">
+                                   autocomplete="current-password">
                         </div>
                         <button type="submit" class="btn btn-pool w-100">Log in</button>
                     </form>

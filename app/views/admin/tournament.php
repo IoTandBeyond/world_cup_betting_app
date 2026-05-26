@@ -106,10 +106,10 @@ ob_start();
                             <input type="text" name="name" class="form-control" placeholder="Brazil" required>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" name="short_name" class="form-control" placeholder="BRA" maxlength="10" required>
+                            <input type="text" name="short_name" class="form-control" placeholder="ARG" maxlength="10" required title="3-letter display code">
                         </div>
                         <div class="col-md-2">
-                            <input type="text" name="fifa_code" class="form-control" placeholder="BRA" maxlength="3" required>
+                            <input type="text" name="fifa_code" class="form-control" placeholder="AR" maxlength="10" required title="2-letter ISO code for flags">
                         </div>
                         <div class="col-md-3">
                             <button type="submit" class="btn btn-outline-primary w-100">Add team</button>
@@ -124,13 +124,14 @@ ob_start();
                 </div>
                 <div class="card-body">
                     <p class="small text-muted mb-2">
-                        One team per line: <code>Full Name,SHORT,FIF</code>
+                        One team per line: <code>Name,short_name,fifa_code</code>
+                        (e.g. <code>Argentina,ARG,AR</code> — 3-letter short, 2-letter ISO for flags).
                     </p>
                     <form method="POST" action="<?= url('/admin/tournament/import') ?>">
                         <?= \App\Services\Csrf::field() ?>
                         <input type="hidden" name="tournament_id" value="<?= (int) $selected['id'] ?>">
                         <textarea name="teams_csv" class="form-control font-monospace mb-2" rows="8"
-                                  placeholder="Brazil,BRA,BRA&#10;Germany,GER,GER&#10;Argentina,ARG,ARG"></textarea>
+                                  placeholder="Brazil,BRA,BR&#10;Argentina,ARG,AR&#10;Chile,CHL,CL"></textarea>
                         <button type="submit" class="btn btn-primary">Import teams</button>
                     </form>
                 </div>
@@ -147,7 +148,7 @@ ob_start();
                             <tr>
                                 <th>Name</th>
                                 <th>Short</th>
-                                <th>FIFA</th>
+                                <th>ISO (flag)</th>
                             </tr>
                         </thead>
                         <tbody>

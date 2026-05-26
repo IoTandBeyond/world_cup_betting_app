@@ -60,8 +60,8 @@ CALL sp_activate_tournament(1);
 CALL sp_add_team(
     1,              -- tournament_id
     'Brazil',       -- name
-    'BRA',          -- short_name (max 10 chars)
-    'BRA',          -- fifa_code (3 letters)
+    'BRA',          -- short_name (3-letter display, max 10 chars)
+    'BR',           -- fifa_code (2-letter ISO for flagcdn)
     NULL            -- flag_url (optional)
 );
 ```
@@ -69,12 +69,12 @@ CALL sp_add_team(
 **Bulk import** (paste lines into the procedure):
 
 ```sql
-CALL sp_import_teams(1, 'Brazil,BRA,BRA
-Germany,GER,GER
-Argentina,ARG,ARG
-France,FRA,FRA
-Spain,ESP,ESP
-England,ENG,ENG');
+CALL sp_import_teams(1, 'Brazil,BRA,BR
+Germany,GER,DE
+Argentina,ARG,AR
+France,FRA,FR
+Spain,ESP,ES
+England,ENG,GB');
 ```
 
 ## Method C — SQL seed file

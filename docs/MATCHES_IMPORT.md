@@ -7,7 +7,12 @@ Import all fixtures in one step from **Admin → Matches**.
 1. Active tournament (**Admin → Tournament** → Activate).
 2. All teams imported with FIFA codes (**Admin → Tournament** → import teams).
 
-Match rows reference teams by **FIFA code** (`BRA`, `GER`, etc.) — the same 3-letter codes in your teams CSV.
+Match rows reference teams by code. The importer matches either column from your teams table:
+
+- **`fifa_code`** — 2-letter ISO (e.g. `AR`, `BR`) — used for flags
+- **`short_name`** — 3-letter display code (e.g. `ARG`, `BRA`) — shown on match cards
+
+Your matches CSV can use **either** form (`ARG` or `AR` for Argentina).
 
 ## CSV format
 
@@ -62,7 +67,7 @@ ARG,FRA,2026-06-16 17:00:00,group,B,SoFi Stadium
 
 | Issue | Fix |
 |--------|-----|
-| Unknown home/away team | Import missing teams first; codes must match exactly |
+| Unknown home/away team | Import teams first; use each team's `short_name` (3-letter) or `fifa_code` (2-letter) |
 | Invalid kickoff | Use `YYYY-MM-DD HH:MM:SS` |
 | Invalid stage | Use values from the list above |
 | 0 imported | Check flash error for line-by-line issues |

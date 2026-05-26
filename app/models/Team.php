@@ -8,22 +8,31 @@ use App\Services\Database;
 
 class Team
 {
+    /**
+     * Resolve a team by match CSV code (2-letter fifa_code or 3-letter short_name).
+     */
     public static function findIdByFifaCode(
         int $tournamentId,
-        string $fifaCode
+        string $code
     ): ?int {
+        $code = strtoupper(trim($code));
+
+        if ($code === '') {
+            return null;
+        }
+
         $db = Database::connection();
 
         $stmt = $db->prepare('
             SELECT id FROM teams
             WHERE tournament_id = :tournament_id
-              AND fifa_code = :fifa_code
+              AND (fifa_code = :code OR short_name = :code)
             LIMIT 1
         ');
 
         $stmt->execute([
             'tournament_id' => $tournamentId,
-            'fifa_code' => strtoupper(trim($fifaCode)),
+            'code' => $code,
         ]);
 
         $id = $stmt->fetchColumn();

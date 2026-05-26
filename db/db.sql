@@ -53,7 +53,7 @@ CREATE TABLE teams (
     tournament_id BIGINT UNSIGNED NOT NULL,
     name VARCHAR(120) NOT NULL,
     short_name VARCHAR(10) NOT NULL,
-    fifa_code VARCHAR(3) NOT NULL,
+    fifa_code VARCHAR(10) NOT NULL,
     flag_url VARCHAR(255) NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_teams_tournament

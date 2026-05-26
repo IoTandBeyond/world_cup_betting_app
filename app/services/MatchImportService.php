@@ -99,12 +99,14 @@ class MatchImportService
       $awayId = Team::findIdByFifaCode($tournamentId, $data['away']);
 
       if (!$homeId) {
-        $errors[] = "Line {$lineNum}: unknown home team \"{$data['home']}\".";
+        $errors[] = "Line {$lineNum}: unknown home team \"{$data['home']}\" "
+          . '(use 2-letter fifa_code or 3-letter short_name from teams table).';
         continue;
       }
 
       if (!$awayId) {
-        $errors[] = "Line {$lineNum}: unknown away team \"{$data['away']}\".";
+        $errors[] = "Line {$lineNum}: unknown away team \"{$data['away']}\" "
+          . '(use 2-letter fifa_code or 3-letter short_name from teams table).';
         continue;
       }
 

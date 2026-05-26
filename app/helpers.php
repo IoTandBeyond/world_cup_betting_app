@@ -97,9 +97,18 @@ if (!function_exists('parse_csv_content')) {
 }
 
 if (!function_exists('fifa_flag_iso')) {
-    /** Map FIFA codes to ISO 3166-1 alpha-2 for flag images. */
+    /**
+     * ISO code for flagcdn.com. Teams store 2-letter codes in fifa_code (e.g. AR, BR).
+     * Legacy 3-letter FIFA codes are mapped when passed directly.
+     */
     function fifa_flag_iso(string $fifaCode): string
     {
+        $code = strtoupper(trim($fifaCode));
+
+        if (strlen($code) === 2) {
+            return strtolower($code);
+        }
+
         $map = [
             'ENG' => 'gb-eng',
             'SCO' => 'gb-sct',
@@ -113,9 +122,9 @@ if (!function_exists('fifa_flag_iso')) {
             'CIV' => 'ci',
             'CPV' => 'cv',
             'CUR' => 'cw',
+            'GER' => 'de',
+            'NED' => 'nl',
         ];
-
-        $code = strtoupper(trim($fifaCode));
 
         return $map[$code] ?? strtolower($code);
     }
