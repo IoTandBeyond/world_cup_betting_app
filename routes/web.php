@@ -9,7 +9,7 @@ use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
 use App\Controllers\LeaderboardController;
 use App\Controllers\PredictionController;
-use App\Controllers\RegisterController;
+use App\Controllers\TournamentController;
 use App\Middleware\AdminMiddleware;
 use App\Middleware\AuthMiddleware;
 use App\Services\Router;
@@ -29,6 +29,8 @@ $router->post('/password/change', [PasswordController::class, 'change'], [AuthMi
 
 $router->get('/register/{token}', [RegisterController::class, 'form']);
 $router->post('/register/{token}', [RegisterController::class, 'register']);
+
+$router->post('/tournament/switch', [TournamentController::class, 'switch'], [AuthMiddleware::class]);
 
 $router->get('/dashboard', [DashboardController::class, 'index'], [AuthMiddleware::class]);
 $router->get('/bonus', [BonusController::class, 'index'], [AuthMiddleware::class]);

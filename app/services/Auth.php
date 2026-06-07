@@ -43,7 +43,21 @@ class Auth
     {
         $user = self::user();
 
+        return $user && in_array($user['role'], ['admin', 'host'], true);
+    }
+
+    public static function isSuperAdmin(): bool
+    {
+        $user = self::user();
+
         return $user && $user['role'] === 'admin';
+    }
+
+    public static function isHost(): bool
+    {
+        $user = self::user();
+
+        return $user && $user['role'] === 'host';
     }
 
     public static function user(): ?array

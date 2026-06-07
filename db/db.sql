@@ -8,7 +8,7 @@ CREATE TABLE users (
     name VARCHAR(120) NOT NULL,
     email VARCHAR(190) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    role ENUM('admin', 'user') DEFAULT 'user',
+    role ENUM('admin', 'host', 'user') DEFAULT 'user',
     is_active TINYINT(1) DEFAULT 1,
     must_change_password TINYINT(1) NOT NULL DEFAULT 0,
     policy_accepted_at DATETIME NULL,
@@ -24,11 +24,32 @@ CREATE TABLE invitations (
     email VARCHAR(190) NOT NULL,
     token VARCHAR(128) NOT NULL UNIQUE,
     invited_by BIGINT UNSIGNED NOT NULL,
+    tournament_id BIGINT UNSIGNED NULL,
     expires_at DATETIME NOT NULL,
     used_at DATETIME NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_invitations_user
         FOREIGN KEY (invited_by)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_invitations_tournament
+        FOREIGN KEY (tournament_id)
+        REFERENCES tournaments(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE tournament_members (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    tournament_id BIGINT UNSIGNED NOT NULL,
+    user_id BIGINT UNSIGNED NOT NULL,
+    joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_tournament_member (tournament_id, user_id),
+    CONSTRAINT fk_tm_tournament
+        FOREIGN KEY (tournament_id)
+        REFERENCES tournaments(id)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_tm_user
+        FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -45,7 +66,12 @@ CREATE TABLE tournaments (
         'active',
         'finished'
     ) DEFAULT 'upcoming',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    host_user_id BIGINT UNSIGNED NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_tournaments_host
+        FOREIGN KEY (host_user_id)
+        REFERENCES users(id)
+        ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE teams (

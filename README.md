@@ -135,6 +135,7 @@ For existing databases, run migrations:
 mysql -u root -p world_cup_poll_db < db/migrations/001_must_change_password.sql
 mysql -u root -p world_cup_poll_db < db/migrations/002_policy_acceptance.sql
 mysql -u root -p world_cup_poll_db < db/migrations/003_fifa_code_length.sql
+mysql -u root -p world_cup_poll_db < db/migrations/004_hosts_parallel_tournaments.sql
 ```
 
 ## Usage

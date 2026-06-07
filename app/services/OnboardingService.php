@@ -50,6 +50,6 @@ class OnboardingService
             return '/password/change';
         }
 
-        return Auth::isAdmin() ? '/admin' : '/dashboard';
+        return Auth::isSuperAdmin() ? '/admin' : (Auth::isHost() ? '/admin/tournament' : '/dashboard');
     }
 }

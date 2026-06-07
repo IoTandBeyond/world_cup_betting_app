@@ -9,13 +9,14 @@ use App\Models\Prediction;
 use App\Models\Tournament;
 use App\Services\Auth;
 use App\Services\LeaderboardService;
+use App\Services\TournamentContext;
 
 class DashboardController extends Controller
 {
     public function index(): void
     {
         $user = Auth::user();
-        $tournament = Tournament::active();
+        $tournament = TournamentContext::currentTournament($user);
         $tab = $this->normalizeTab($_GET['tab'] ?? 'upcoming');
 
         if (!$tournament) {
@@ -27,6 +28,7 @@ class DashboardController extends Controller
                 'predictions' => [],
                 'points' => 0,
                 'stats' => [],
+                'userTournaments' => TournamentContext::availableTournaments($user),
             ]);
             return;
         }
@@ -47,6 +49,7 @@ class DashboardController extends Controller
             'points' => $points,
             'rank' => $rank,
             'stats' => self::buildStats($allMatches, $predictions),
+            'userTournaments' => TournamentContext::availableTournaments($user),
         ]);
     }
 

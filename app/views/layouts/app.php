@@ -1,4 +1,7 @@
 <?php
+use App\Services\Auth;
+use App\Services\TournamentContext;
+
 $currentPath = request_path();
 $navItems = [
     '/dashboard' => ['label' => 'My Bets', 'icon' => 'fa-futbol'],
@@ -15,6 +18,9 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
         . '<i class="fa ' . e($item['icon']) . ' me-2"></i>'
         . e($item['label']) . '</a>';
 };
+$user = Auth::user();
+$currentTournament = $user ? TournamentContext::currentTournament($user) : null;
+$userTournaments = $user ? TournamentContext::availableTournaments($user) : [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -104,6 +110,25 @@ $navLink = static function (string $path, array $item) use ($currentPath): strin
 </div>
 
 <main class="container app-main py-3 py-md-4">
+    <?php if ($user && count($userTournaments) > 1 && $currentTournament): ?>
+        <form method="POST"
+              action="<?= url('/tournament/switch') ?>"
+              class="d-flex flex-wrap align-items-center gap-2 mb-3">
+            <?= \App\Services\Csrf::field() ?>
+            <input type="hidden" name="redirect" value="<?= e($currentPath) ?>">
+            <label class="small text-muted mb-0">Tournament:</label>
+            <select name="tournament_id"
+                    class="form-select form-select-sm w-auto"
+                    onchange="this.form.submit()">
+                <?php foreach ($userTournaments as $t): ?>
+                    <option value="<?= (int) $t['id'] ?>"
+                        <?= (int) $t['id'] === (int) $currentTournament['id'] ? 'selected' : '' ?>>
+                        <?= e($t['name']) ?> (<?= (int) $t['year'] ?>)
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </form>
+    <?php endif; ?>
     <?php
     $flashSuccess = \App\Services\Flash::get('success');
     $flashError = \App\Services\Flash::get('error');

@@ -37,6 +37,7 @@ ob_start();
                   enctype="multipart/form-data"
                   class="row g-3 align-items-end">
                 <?= \App\Services\Csrf::field() ?>
+                <input type="hidden" name="tournament_id" value="<?= (int) $tournament['id'] ?>">
                 <div class="col-md-8">
                     <label class="form-label">CSV file</label>
                     <input type="file"

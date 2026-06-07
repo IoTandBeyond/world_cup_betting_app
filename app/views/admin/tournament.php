@@ -1,10 +1,13 @@
 <?php
 $title = 'Tournament & Teams';
+$isSuperAdmin = $isSuperAdmin ?? true;
+$isHost = $isHost ?? false;
 ob_start();
 ?>
-<h1 class="h3 mb-4">Tournament &amp; Teams</h1>
+<h1 class="h3 mb-4"><?= $isHost ? 'My tournament' : 'Tournament &amp; Teams' ?></h1>
 
 <div class="row g-4">
+    <?php if ($isSuperAdmin): ?>
     <div class="col-lg-5">
         <div class="card shadow-sm">
             <div class="card-header bg-white">
@@ -16,12 +19,12 @@ ob_start();
                     <div class="mb-3">
                         <label class="form-label">Name</label>
                         <input type="text" name="name" class="form-control"
-                               placeholder="FIFA World Cup 2026" required>
+                               placeholder="Office World Cup 2026" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Slug <span class="text-muted">(optional)</span></label>
                         <input type="text" name="slug" class="form-control"
-                               placeholder="world-cup-2026">
+                               placeholder="office-world-cup-2026">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Year</label>
@@ -38,21 +41,32 @@ ob_start();
                             <input type="date" name="end_date" class="form-control" required>
                         </div>
                     </div>
+                    <hr>
+                    <p class="small text-muted mb-2">Tournament host (manages teams, matches, invitations)</p>
+                    <div class="mb-3">
+                        <label class="form-label">Host name</label>
+                        <input type="text" name="host_name" class="form-control" placeholder="Jane Smith" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Host email</label>
+                        <input type="email" name="host_email" class="form-control"
+                               placeholder="host@example.com" required>
+                    </div>
                     <div class="form-check mb-3">
                         <input type="checkbox" name="set_active" value="1"
                                class="form-check-input" id="set_active" checked>
                         <label class="form-check-label" for="set_active">
-                            Set as active tournament
+                            Activate tournament immediately
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Create tournament</button>
+                    <button type="submit" class="btn btn-primary w-100">Create tournament &amp; invite host</button>
                 </form>
             </div>
         </div>
 
         <div class="card shadow-sm mt-3">
             <div class="card-header bg-white">
-                <strong>Existing tournaments</strong>
+                <strong>All tournaments</strong>
             </div>
             <ul class="list-group list-group-flush">
                 <?php foreach ($tournaments as $t): ?>
@@ -67,6 +81,11 @@ ob_start();
                             </span>
                         </span>
                     </li>
+                    <?php if (!empty($t['host_email'])): ?>
+                        <li class="list-group-item small text-muted py-1 ps-4">
+                            Host: <?= e($t['host_name'] ?? '') ?> &lt;<?= e($t['host_email']) ?>&gt;
+                        </li>
+                    <?php endif; ?>
                 <?php endforeach; ?>
                 <?php if (empty($tournaments)): ?>
                     <li class="list-group-item text-muted">No tournaments yet.</li>
@@ -74,8 +93,9 @@ ob_start();
             </ul>
         </div>
     </div>
+    <?php endif; ?>
 
-    <div class="col-lg-7">
+    <div class="<?= $isSuperAdmin ? 'col-lg-7' : 'col-12' ?>">
         <?php if (!$selected): ?>
             <div class="alert alert-info">
                 Create a tournament, then select it from the list to add teams.
@@ -83,16 +103,22 @@ ob_start();
         <?php else: ?>
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <h2 class="h5 mb-0"><?= e($selected['name']) ?></h2>
-                <?php if ($selected['status'] !== 'active'): ?>
+                <?php if ($isSuperAdmin && $selected['status'] !== 'active'): ?>
                     <form method="POST" action="<?= url('/admin/tournament/activate') ?>" class="d-inline">
                         <?= \App\Services\Csrf::field() ?>
                         <input type="hidden" name="tournament_id" value="<?= (int) $selected['id'] ?>">
                         <button type="submit" class="btn btn-success btn-sm">Activate</button>
                     </form>
-                <?php else: ?>
+                <?php elseif ($selected['status'] === 'active'): ?>
                     <span class="badge bg-success">Active</span>
+                <?php else: ?>
+                    <span class="badge bg-secondary"><?= e($selected['status']) ?></span>
                 <?php endif; ?>
             </div>
+            <?php if (!empty($selected['host_email'])): ?>
+                <p class="small text-muted">Host: <?= e($selected['host_name'] ?? '') ?>
+                    &lt;<?= e($selected['host_email']) ?>&gt;</p>
+            <?php endif; ?>
 
             <div class="card shadow-sm mb-3">
                 <div class="card-header bg-white">
@@ -170,6 +196,7 @@ ob_start();
     </div>
 </div>
 
+<?php if ($isSuperAdmin): ?>
 <div class="card shadow-sm mt-4 border-info">
     <div class="card-header bg-info-subtle">
         <strong>SQL procedure (optional)</strong>
@@ -188,6 +215,7 @@ CALL sp_activate_tournament(1);</pre>
         <p class="mb-0">Example seed file: <code>db/seeds/world_cup_2026_teams.sql</code></p>
     </div>
 </div>
+<?php endif; ?>
 <?php
 $content = ob_get_clean();
 require __DIR__ . '/layout.php';

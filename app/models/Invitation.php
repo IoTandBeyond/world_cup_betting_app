@@ -13,19 +13,21 @@ class Invitation
         string $email,
         string $token,
         int $invitedBy,
-        string $expiresAt
+        string $expiresAt,
+        ?int $tournamentId = null
     ): int {
         $db = Database::connection();
 
         $stmt = $db->prepare('
-            INSERT INTO invitations (email, token, invited_by, expires_at)
-            VALUES (:email, :token, :invited_by, :expires_at)
+            INSERT INTO invitations (email, token, invited_by, tournament_id, expires_at)
+            VALUES (:email, :token, :invited_by, :tournament_id, :expires_at)
         ');
 
         $stmt->execute([
-            'email' => $email,
+            'email' => strtolower(trim($email)),
             'token' => $token,
             'invited_by' => $invitedBy,
+            'tournament_id' => $tournamentId,
             'expires_at' => $expiresAt,
         ]);
 
@@ -65,11 +67,30 @@ class Invitation
         $db = Database::connection();
 
         return $db->query('
-            SELECT i.*, u.name AS invited_by_name
+            SELECT i.*, u.name AS invited_by_name, t.name AS tournament_name
             FROM invitations i
             JOIN users u ON u.id = i.invited_by
+            LEFT JOIN tournaments t ON t.id = i.tournament_id
             ORDER BY i.created_at DESC
         ')->fetchAll();
+    }
+
+    public static function forTournament(int $tournamentId): array
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            SELECT i.*, u.name AS invited_by_name, t.name AS tournament_name
+            FROM invitations i
+            JOIN users u ON u.id = i.invited_by
+            LEFT JOIN tournaments t ON t.id = i.tournament_id
+            WHERE i.tournament_id = :tournament_id
+            ORDER BY i.created_at DESC
+        ');
+
+        $stmt->execute(['tournament_id' => $tournamentId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public static function isValid(?array $invitation): bool
@@ -90,5 +111,4 @@ class Invitation
 
         return strtotime($invitation['expires_at']) > time();
     }
-
 }

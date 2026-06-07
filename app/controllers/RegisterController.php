@@ -68,11 +68,20 @@ class RegisterController extends Controller
             $this->redirect('/register/' . $token);
         }
 
-        User::create([
+        $userId = User::create([
             'name' => $name,
             'email' => $email,
             'password' => $password,
         ]);
+
+        $invitation = Invitation::findByToken($token);
+
+        if ($invitation && !empty($invitation['tournament_id'])) {
+            \App\Models\TournamentMember::add(
+                (int) $invitation['tournament_id'],
+                $userId
+            );
+        }
 
         InvitationService::redeem($token);
 

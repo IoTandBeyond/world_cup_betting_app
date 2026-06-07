@@ -4,12 +4,19 @@ ob_start();
 ?>
 <h1 class="h3 mb-4">Invitations</h1>
 
+<?php if (!empty($tournament)): ?>
+    <p class="text-muted mb-4">
+        Tournament: <strong><?= e($tournament['name']) ?></strong>
+    </p>
+<?php endif; ?>
+
 <div class="card shadow-sm mb-4">
     <div class="card-body">
         <h5>Send invitation by email</h5>
         <p class="small text-muted mb-3">
-            Creates the user account, sends a <strong>temporary password</strong> from
-            <code>no-reply@iot4b.ca</code>, and requires a new password on first login.
+            Invites a player to <strong><?= e($tournament['name'] ?? 'this tournament') ?></strong>.
+            New players receive a temporary password from <code>no-reply@iot4b.ca</code>.
+            Existing players are added to this tournament and notified by email.
         </p>
         <form method="POST" action="<?= url('/admin/invitations') ?>" class="row g-2">
             <?= \App\Services\Csrf::field() ?>

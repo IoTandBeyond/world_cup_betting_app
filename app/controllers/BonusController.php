@@ -8,7 +8,7 @@ use App\Models\BonusPrediction;
 use App\Models\Player;
 use App\Models\Setting;
 use App\Models\Team;
-use App\Models\Tournament;
+use App\Services\TournamentContext;
 use App\Services\Auth;
 use App\Services\Csrf;
 use App\Services\Flash;
@@ -19,7 +19,7 @@ class BonusController extends Controller
     public function index(): void
     {
         $user = Auth::user();
-        $tournament = Tournament::active();
+        $tournament = TournamentContext::currentTournament($user);
 
         if (!$tournament) {
             $this->view('bonus/index', [
@@ -58,7 +58,7 @@ class BonusController extends Controller
         Csrf::validateOrAbort();
 
         $user = Auth::user();
-        $tournament = Tournament::active();
+        $tournament = TournamentContext::currentTournament($user);
 
         if (!$tournament) {
             Flash::set('error', 'No active tournament.');

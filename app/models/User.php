@@ -165,6 +165,62 @@ class User
         ')->fetchAll();
     }
 
+    /** All users with member tournaments and hosted tournament (for admin list). */
+    public static function allWithTournaments(): array
+    {
+        $db = Database::connection();
+
+        $rows = $db->query('
+            SELECT u.id, u.name, u.email, u.role, u.is_active,
+                   u.must_change_password, u.policy_accepted_at, u.policy_version,
+                   u.last_login_at, u.created_at,
+                   GROUP_CONCAT(
+                       DISTINCT CONCAT(t.name, " (", t.year, ")")
+                       ORDER BY t.name SEPARATOR ", "
+                   ) AS member_tournaments,
+                   ht.name AS hosted_tournament_name,
+                   ht.year AS hosted_tournament_year
+            FROM users u
+            LEFT JOIN tournament_members tm ON tm.user_id = u.id
+            LEFT JOIN tournaments t ON t.id = tm.tournament_id
+            LEFT JOIN tournaments ht ON ht.host_user_id = u.id
+            GROUP BY u.id, u.name, u.email, u.role, u.is_active,
+                     u.must_change_password, u.policy_accepted_at, u.policy_version,
+                     u.last_login_at, u.created_at,
+                     ht.name, ht.year
+            ORDER BY u.name ASC
+        ')->fetchAll();
+
+        foreach ($rows as &$row) {
+            $row['tournament_label'] = self::formatTournamentLabel($row);
+        }
+        unset($row);
+
+        return $rows;
+    }
+
+    /** @param array<string, mixed> $user */
+    public static function formatTournamentLabel(array $user): string
+    {
+        if (($user['role'] ?? '') === 'host' && !empty($user['hosted_tournament_name'])) {
+            $year = !empty($user['hosted_tournament_year'])
+                ? ' (' . (int) $user['hosted_tournament_year'] . ')'
+                : '';
+
+            return $user['hosted_tournament_name'] . $year . ' (host)';
+        }
+
+        if (!empty($user['member_tournaments'])) {
+            return $user['member_tournaments'];
+        }
+
+        if (($user['role'] ?? '') === 'admin') {
+            return '—';
+        }
+
+        return '—';
+    }
+
     public static function setActive(int $id, bool $active): void
     {
         $db = Database::connection();

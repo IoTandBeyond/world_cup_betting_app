@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Models\Tournament;
+use App\Services\TournamentContext;
 use App\Services\Auth;
 use App\Services\LeaderboardService;
 
@@ -13,7 +13,7 @@ class LeaderboardController extends Controller
     public function index(): void
     {
         $user = Auth::user();
-        $tournament = Tournament::active();
+        $tournament = TournamentContext::currentTournament($user);
         $rankings = [];
         $userRank = null;
         $userPoints = 0;
