@@ -47,7 +47,10 @@ Set in `.env`:
 
 ```
 APP_URL=http://localhost:8000
+APP_TIMEZONE=America/Toronto
 ```
+
+Match kickoff times in CSV imports and bet locking use `APP_TIMEZONE`. If the server runs UTC, set this to your local zone (e.g. `America/Toronto` for EDT/EST).
 
 ### Option B — Apache / MAMP (project root as document root)
 

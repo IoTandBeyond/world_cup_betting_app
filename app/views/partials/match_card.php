@@ -22,7 +22,7 @@ if ($finished) {
             </span>
             <span>
                 <i class="fa-regular fa-clock me-1"></i>
-                <?= e(date('M j, H:i', strtotime($match['kickoff_at']))) ?>
+                <?= e(format_kickoff($match['kickoff_at'])) ?>
             </span>
         </div>
         <div class="match-card__teams">

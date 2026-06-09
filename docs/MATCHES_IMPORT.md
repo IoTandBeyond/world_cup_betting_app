@@ -41,11 +41,15 @@ Aliases like `Round of 16` or `quarter final` also work.
 
 ### Kickoff datetime
 
+Enter kickoff times in **APP_TIMEZONE** (see `.env`, e.g. `America/Toronto` for EDT/EST).
+
 Supported examples:
 
 - `2026-06-15 14:00:00`
 - `2026-06-15 14:00`
 - `2026-06-15T14:00`
+
+Bets lock when kickoff time passes in that timezone, not server UTC.
 
 ## Example file
 

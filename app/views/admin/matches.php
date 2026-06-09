@@ -13,6 +13,7 @@ ob_start();
     <p class="text-muted mb-3">
         Active tournament: <strong><?= e($tournament['name']) ?></strong>
         — <?= count($teams) ?> team(s) loaded
+        <br><span class="small">Kickoff times use <?= e(app_timezone()) ?> (bets lock at kickoff in this zone).</span>
     </p>
 
     <div class="card shadow-sm mb-4">

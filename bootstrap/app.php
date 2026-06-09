@@ -13,6 +13,14 @@ require_once BASE_PATH . '/app/helpers.php';
 $dotenv = Dotenv::createImmutable(BASE_PATH);
 $dotenv->safeLoad();
 
+$appTimezone = $_ENV['APP_TIMEZONE'] ?? 'UTC';
+
+if (!in_array($appTimezone, timezone_identifiers_list(), true)) {
+    $appTimezone = 'UTC';
+}
+
+date_default_timezone_set($appTimezone);
+
 if (!defined('WEB_ROOT')) {
     define('WEB_ROOT', app_web_root());
 }

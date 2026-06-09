@@ -157,6 +157,32 @@ if (!function_exists('match_stage_label')) {
     }
 }
 
+if (!function_exists('app_timezone')) {
+    /** IANA timezone for match kickoffs and display (e.g. America/Toronto). */
+    function app_timezone(): string
+    {
+        return date_default_timezone_get();
+    }
+}
+
+if (!function_exists('format_kickoff')) {
+    /** Format a stored kickoff datetime for display in APP_TIMEZONE. */
+    function format_kickoff(?string $kickoffAt, string $format = 'M j, H:i'): string
+    {
+        if ($kickoffAt === null || $kickoffAt === '') {
+            return '—';
+        }
+
+        $dt = date_create($kickoffAt, timezone_open(app_timezone()));
+
+        if ($dt === false) {
+            return $kickoffAt;
+        }
+
+        return $dt->format($format);
+    }
+}
+
 if (!function_exists('absolute_url')) {
     /** Full URL (for invitation emails). Uses APP_URL when set. */
     function absolute_url(string $path = '/'): string

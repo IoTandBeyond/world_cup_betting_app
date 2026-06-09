@@ -87,7 +87,16 @@ class MatchModel
             return false;
         }
 
-        return strtotime($match['kickoff_at']) > time();
+        $kickoff = date_create(
+            $match['kickoff_at'],
+            timezone_open(date_default_timezone_get())
+        );
+
+        if ($kickoff === false) {
+            return false;
+        }
+
+        return $kickoff->getTimestamp() > time();
     }
 
     public static function updateScore(
