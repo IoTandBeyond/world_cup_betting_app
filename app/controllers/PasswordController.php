@@ -55,6 +55,6 @@ class PasswordController extends Controller
         User::updatePassword((int) $user['id'], $password);
 
         Flash::set('success', 'Your password was updated. Welcome!');
-        $this->redirect(Auth::isAdmin() ? '/admin' : '/dashboard');
+        $this->redirect(OnboardingService::redirectAfterLogin());
     }
 }
