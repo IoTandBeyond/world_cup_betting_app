@@ -65,15 +65,16 @@ Points are calculated automatically when the organizer enters the official final
 | Result | Points |
 |--------|--------|
 | **Exact score** (both goals correct) | **5** |
-| **Correct winner** (right team wins, wrong score) | **3** |
-| **Correct draw** (both teams draw, wrong score) | **3** |
+| **Correct winner or draw** and **correct goal difference** | **3** |
+| **Correct winner or draw** only (wrong goal difference) | **2** |
 | Wrong outcome (wrong winner or wrong draw) | **0** |
 
 **Examples**
 
-- Official: Brazil 2–1 Germany. You predicted 2–1 → **5 points**.
-- Official: Brazil 2–1 Germany. You predicted 3–0 → **3 points** (correct winner).
-- Official: 1–1. You predicted 2–2 → **3 points** (correct draw).
+- Official: Brazil 2–1 Germany. You predicted 2–1 → **5 points** (exact score).
+- Official: Chile 3–2 Argentina. You predicted 4–3 → **3 points** (correct winner and goal difference).
+- Official: Brazil 2–1 Germany. You predicted 3–0 → **2 points** (correct winner only).
+- Official: 1–1. You predicted 2–2 → **3 points** (correct draw and goal difference).
 - Official: 2–1. You predicted 1–2 → **0 points**.
 
 ---
@@ -201,7 +202,8 @@ For **technical problems** with the site, report them to the administrator. **Te
 | Match bet | Exact score (home & away goals) |
 | Before kickoff | Predictions allowed |
 | Exact score | 5 points |
-| Correct winner or draw (wrong score) | 3 points |
+| Correct winner or draw **and** correct goal difference | 3 points |
+| Correct winner or draw only (wrong goal difference) | 2 points |
 | Bonus max (all correct) | Up to 34 points from four bonus categories |
 | App problems | No liability; organizer decisions final |
 

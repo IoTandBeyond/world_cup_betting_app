@@ -66,18 +66,25 @@ class ScoringService
             return Setting::get('points_exact_score', 5);
         }
 
-        $actualDiff = $home <=> $away;
-        $predDiff = $predHome <=> $predAway;
+        $actualOutcome = $home <=> $away;
+        $predOutcome = $predHome <=> $predAway;
 
-        if ($actualDiff === $predDiff) {
-            if ($actualDiff === 0) {
-                return Setting::get('points_correct_draw', 3);
-            }
-
-            return Setting::get('points_correct_winner', 3);
+        if ($actualOutcome !== $predOutcome) {
+            return 0;
         }
 
-        return 0;
+        $actualGoalDiff = $home - $away;
+        $predGoalDiff = $predHome - $predAway;
+
+        if ($actualGoalDiff === $predGoalDiff) {
+            return Setting::get('points_correct_diff', 3);
+        }
+
+        if ($actualOutcome === 0) {
+            return Setting::get('points_correct_draw', 2);
+        }
+
+        return Setting::get('points_correct_winner', 2);
     }
 
     private static function logPoints(

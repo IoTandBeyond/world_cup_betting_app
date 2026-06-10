@@ -86,7 +86,8 @@ ob_start();
             <strong>Scoring reminder</strong>
             <ul class="mb-0 mt-2">
                 <li>Exact score: 5 points</li>
-                <li>Correct winner or draw (wrong score): 3 points</li>
+                <li>Correct winner or draw + goal difference: 3 points</li>
+                <li>Correct winner or draw only: 2 points</li>
                 <li>Bonus bets: see <a href="<?= url('/bonus') ?>">Bonus page</a></li>
             </ul>
         </div>

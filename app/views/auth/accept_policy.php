@@ -64,7 +64,8 @@
                     <table class="table table-sm table-bordered">
                         <tr><th>Result</th><th>Points</th></tr>
                         <tr><td>Exact score</td><td><strong>5</strong></td></tr>
-                        <tr><td>Correct winner or correct draw (wrong score)</td><td><strong>3</strong></td></tr>
+                        <tr><td>Correct winner or draw + correct goal difference</td><td><strong>3</strong></td></tr>
+                        <tr><td>Correct winner or draw only</td><td><strong>2</strong></td></tr>
                         <tr><td>Wrong outcome</td><td><strong>0</strong></td></tr>
                     </table>
 

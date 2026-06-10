@@ -244,8 +244,9 @@ CREATE TABLE settings (
 
 INSERT INTO settings (`key`, `value`) VALUES
 ('points_exact_score', '5'),
-('points_correct_winner', '3'),
-('points_correct_draw', '3'),
+('points_correct_diff', '3'),
+('points_correct_winner', '2'),
+('points_correct_draw', '2'),
 ('points_world_cup_winner', '10'),
 ('points_top_scorer', '10'),
 ('points_best_goalkeeper', '7'),
