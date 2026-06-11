@@ -78,7 +78,7 @@
                         <li>MVP — 7 pts</li>
                     </ul>
                     <br>
-                    <p>Bonus points are awarded when the organizer confirms official tournament results and runs scoring. Bonus picks should be submitted early; the organizer may close bonus entry before the tournament ends.</p>
+                    <p>Bonus points are awarded when the organizer confirms official tournament results and runs scoring. Bonus entry closes at the <strong>first match kickoff</strong> of the tournament.</p>
 
                     <h2 class="h6">6. Leaderboard and ranking</h2>
                     <ul class="mb-0">

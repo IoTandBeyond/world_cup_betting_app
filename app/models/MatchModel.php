@@ -77,6 +77,22 @@ class MatchModel
         return $stmt->fetchAll();
     }
 
+    public static function firstKickoffAt(int $tournamentId): ?string
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            SELECT MIN(kickoff_at) FROM matches
+            WHERE tournament_id = :tournament_id
+        ');
+
+        $stmt->execute(['tournament_id' => $tournamentId]);
+
+        $value = $stmt->fetchColumn();
+
+        return is_string($value) && $value !== '' ? $value : null;
+    }
+
     public static function canPredict(?array $match): bool
     {
         if (!$match || !(int) $match['allow_predictions']) {

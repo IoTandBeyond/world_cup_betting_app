@@ -1,5 +1,7 @@
 <?php
 $title = 'Bonus Bets';
+$bonusOpen = $bonusOpen ?? true;
+$firstKickoff = $firstKickoff ?? null;
 ob_start();
 ?>
 <h1 class="h3 mb-1">Bonus predictions</h1>
@@ -11,6 +13,23 @@ ob_start();
         <p>No active tournament.</p>
     </div>
 <?php else: ?>
+    <?php if ($bonusOpen && $firstKickoff): ?>
+        <div class="alert alert-info py-2">
+            <i class="fa fa-clock me-1"></i>
+            Bonus picks close at the first match kickoff:
+            <strong><?= e(format_kickoff($firstKickoff, 'M j, Y H:i')) ?></strong>
+            (<?= e(app_timezone()) ?>).
+        </div>
+    <?php elseif (!$bonusOpen): ?>
+        <div class="alert alert-warning">
+            <i class="fa fa-lock me-1"></i>
+            Bonus predictions are <strong>closed</strong>.
+            The first match kicked off on
+            <strong><?= e(format_kickoff($firstKickoff ?? '', 'M j, Y H:i')) ?></strong>.
+            You can view your saved picks below but cannot change them.
+        </div>
+    <?php endif; ?>
+
     <form method="POST" action="<?= url('/bonus') ?>">
         <?= \App\Services\Csrf::field() ?>
 
@@ -23,7 +42,10 @@ ob_start();
                             World Cup winner
                             <span class="points-hint">+<?= (int) $points['winner'] ?> pts</span>
                         </label>
-                        <select name="world_cup_winner_team_id" class="form-select" required>
+                        <select name="world_cup_winner_team_id"
+                                class="form-select"
+                                <?= $bonusOpen ? '' : 'disabled' ?>
+                                required>
                             <option value="">Select country</option>
                             <?php foreach ($teams as $t): ?>
                                 <option value="<?= (int) $t['id'] ?>"
@@ -82,7 +104,9 @@ ob_start();
                             </label>
 
                             <?php if (!empty($players)): ?>
-                                <select name="<?= e($field['player_key']) ?>" class="form-select mb-2">
+                                <select name="<?= e($field['player_key']) ?>"
+                                        class="form-select mb-2"
+                                        <?= $bonusOpen ? '' : 'disabled' ?>>
                                     <option value="">— Or pick from list —</option>
                                     <?php foreach ($players as $p): ?>
                                         <?php if ($field['position'] === 'goalkeeper' && $p['position'] !== 'goalkeeper') {
@@ -100,16 +124,20 @@ ob_start();
                                 <p class="small text-muted mb-2">or enter manually:</p>
                             <?php endif; ?>
 
-                            <select name="<?= e($field['team_key']) ?>" class="form-select form-select-sm mb-2">
+                            <select name="<?= e($field['team_key']) ?>"
+                                    class="form-select form-select-sm mb-2"
+                                    <?= $bonusOpen ? '' : 'disabled' ?>>
                                 <option value="">Team</option>
                                 <?php foreach ($teams as $t): ?>
                                     <option value="<?= (int) $t['id'] ?>"><?= e($t['name']) ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <input type="text" name="<?= e($field['name_key']) ?>"
+                            <input type="text"
+                                   name="<?= e($field['name_key']) ?>"
                                    class="form-control form-control-sm"
                                    placeholder="Player name"
-                                   maxlength="150">
+                                   maxlength="150"
+                                   <?= $bonusOpen ? '' : 'disabled' ?>>
                         </div>
                     </div>
                 </div>
@@ -117,7 +145,9 @@ ob_start();
         </div>
 
         <div class="mt-4 d-flex gap-2 flex-wrap">
-            <button type="submit" class="btn btn-pool btn-lg">Save bonus predictions</button>
+            <?php if ($bonusOpen): ?>
+                <button type="submit" class="btn btn-pool btn-lg">Save bonus predictions</button>
+            <?php endif; ?>
             <a href="<?= url('/dashboard') ?>" class="btn btn-outline-secondary btn-lg">Back to matches</a>
         </div>
     </form>

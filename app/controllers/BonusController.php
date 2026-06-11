@@ -8,6 +8,7 @@ use App\Models\BonusPrediction;
 use App\Models\Player;
 use App\Models\Setting;
 use App\Models\Team;
+use App\Services\BonusService;
 use App\Services\TournamentContext;
 use App\Services\Auth;
 use App\Services\Csrf;
@@ -33,6 +34,8 @@ class BonusController extends Controller
         $teams = Team::forTournament($tournamentId);
         $players = Player::forTournament($tournamentId);
         $bonus = BonusPrediction::find((int) $user['id'], $tournamentId);
+        $bonusOpen = BonusService::canSubmit($tournamentId);
+        $firstKickoff = BonusService::firstKickoffAt($tournamentId);
 
         $this->view('bonus/index', [
             'user' => $user,
@@ -40,6 +43,8 @@ class BonusController extends Controller
             'teams' => $teams,
             'players' => $players,
             'bonus' => $bonus,
+            'bonusOpen' => $bonusOpen,
+            'firstKickoff' => $firstKickoff,
             'points' => [
                 'winner' => Setting::get('points_world_cup_winner', 10),
                 'scorer' => Setting::get('points_top_scorer', 10),
@@ -66,6 +71,15 @@ class BonusController extends Controller
         }
 
         $tournamentId = (int) $tournament['id'];
+
+        if (!BonusService::canSubmit($tournamentId)) {
+            Flash::set(
+                'error',
+                'Bonus predictions are closed. The first match of this tournament has already kicked off.'
+            );
+            $this->redirect('/bonus');
+        }
+
         $winnerTeamId = (int) ($_POST['world_cup_winner_team_id'] ?? 0);
 
         if (!$winnerTeamId) {

@@ -90,7 +90,7 @@ Each participant may submit **one set** of bonus picks for the active tournament
 | Best goalkeeper (player) | **7** |
 | MVP (player) | **7** |
 
-Bonus points are awarded when the organizer confirms official tournament results and runs scoring. Bonus picks should be submitted early; the organizer may close bonus entry before the tournament ends.
+Bonus points are awarded when the organizer confirms official tournament results and runs scoring. Bonus entry **closes at the first match kickoff** of the tournament (same timezone as match bets).
 
 ---
 
