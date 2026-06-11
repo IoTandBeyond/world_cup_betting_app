@@ -51,6 +51,9 @@ class MatchImportService
     'group_name' => 'group_name',
     'group' => 'group_name',
     'venue' => 'venue',
+    'stadium' => 'venue',
+    'country' => 'country',
+    'venue_country' => 'country',
   ];
 
   /**
@@ -73,7 +76,7 @@ class MatchImportService
 
     $headers = $hasHeader
       ? self::normalizeHeaders($first)
-      : ['home', 'away', 'kickoff', 'stage', 'group_name', 'venue'];
+      : ['home', 'away', 'kickoff', 'stage', 'group_name', 'venue', 'country'];
 
     $dataRows = $hasHeader ? array_slice($rows, 1) : $rows;
 
@@ -147,6 +150,7 @@ class MatchImportService
         'away_team_id' => $awayId,
         'kickoff_at' => $kickoff,
         'venue' => $data['venue'] !== '' ? $data['venue'] : null,
+        'venue_country' => $data['country'] !== '' ? $data['country'] : null,
       ]);
 
       $imported++;
@@ -182,7 +186,7 @@ class MatchImportService
   /**
    * @param list<string> $headers
    * @param list<string> $row
-   * @return array{home: string, away: string, kickoff: string, stage: string, group_name: string, venue: string}
+   * @return array{home: string, away: string, kickoff: string, stage: string, group_name: string, venue: string, country: string}
    */
   private static function mapRow(array $headers, array $row): array
   {
@@ -193,6 +197,7 @@ class MatchImportService
       'stage' => 'group',
       'group_name' => '',
       'venue' => '',
+      'country' => '',
     ];
 
     foreach ($headers as $i => $key) {

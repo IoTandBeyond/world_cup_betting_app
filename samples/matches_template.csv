@@ -1,4 +1,4 @@
-home_fifa,away_fifa,kickoff_at,stage,group_name,venue
-BRA,GER,2026-06-15 14:00:00,group,A,MetLife Stadium
-ARG,FRA,2026-06-16 17:00:00,group,B,SoFi Stadium
-USA,MEX,2026-06-17 20:00:00,group,C,Azteca Stadium
+home_fifa,away_fifa,kickoff_at,stage,group_name,venue,country
+BRA,GER,2026-06-15 14:00:00,group,A,MetLife Stadium,United States
+ARG,FRA,2026-06-16 17:00:00,group,B,SoFi Stadium,United States
+USA,MEX,2026-06-17 20:00:00,group,C,Azteca Stadium,Mexico

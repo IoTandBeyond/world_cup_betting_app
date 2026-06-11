@@ -11,7 +11,7 @@ if ($finished) {
     $cardClass .= ' match-card--locked';
 }
 ?>
-<div class="col-12 col-lg-6">
+<div class="col-12 col-lg-6 match-list-item" data-search="<?= e(match_search_text($match)) ?>">
     <article class="<?= e($cardClass) ?>">
         <div class="match-card__head">
             <span>
@@ -25,6 +25,11 @@ if ($finished) {
                 <?= e(format_kickoff($match['kickoff_at'])) ?>
             </span>
         </div>
+        <?php if ($venueLabel = match_venue_label($match)): ?>
+            <div class="match-card__venue">
+                <i class="fa fa-location-dot me-1"></i><?= e($venueLabel) ?>
+            </div>
+        <?php endif; ?>
         <div class="match-card__teams">
             <div class="match-card__team">
                 <img src="<?= e(team_flag_url($match['home_fifa_code'], $match['home_flag_url'] ?? null)) ?>"
@@ -103,7 +108,7 @@ if ($finished) {
                             </div>
                         </div>
                         <p class="small text-muted mt-2 mb-0 text-center">
-                            Exact score = 5 pts · Winner or draw = 3 pts
+                            Exact score = 5 pts · Correct winner/draw + goal diff = 3 pts · Winner/draw only = 2 pts
                         </p>
                     </form>
                 </div>

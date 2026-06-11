@@ -190,10 +190,10 @@ class MatchModel
         $stmt = $db->prepare('
             INSERT INTO matches (
                 tournament_id, stage, group_name,
-                home_team_id, away_team_id, kickoff_at, venue, status
+                home_team_id, away_team_id, kickoff_at, venue, venue_country, status
             ) VALUES (
                 :tournament_id, :stage, :group_name,
-                :home_team_id, :away_team_id, :kickoff_at, :venue, :status
+                :home_team_id, :away_team_id, :kickoff_at, :venue, :venue_country, :status
             )
         ');
 
@@ -205,6 +205,7 @@ class MatchModel
             'away_team_id' => $data['away_team_id'],
             'kickoff_at' => $data['kickoff_at'],
             'venue' => $data['venue'] ?? null,
+            'venue_country' => $data['venue_country'] ?? null,
             'status' => $data['status'] ?? 'scheduled',
         ]);
 

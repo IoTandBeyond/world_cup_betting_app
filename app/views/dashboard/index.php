@@ -81,7 +81,23 @@ ob_start();
             <?php endif; ?>
         </div>
     <?php else: ?>
-        <div class="row g-3">
+        <div class="match-search-bar mb-3">
+            <label for="match-search" class="form-label small text-muted mb-1">
+                Search by team, stadium, or country
+            </label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                <input type="search"
+                       id="match-search"
+                       class="form-control"
+                       placeholder="e.g. Argentina, MetLife, USA"
+                       autocomplete="off">
+            </div>
+            <p id="match-search-empty" class="small text-muted mt-2 mb-0 d-none">
+                No matches match your search.
+            </p>
+        </div>
+        <div class="row g-3" id="match-list">
             <?php foreach ($matches as $match): ?>
                 <?php
                 $pred = $predictions[(int) $match['id']] ?? null;
@@ -89,6 +105,31 @@ ob_start();
                 ?>
             <?php endforeach; ?>
         </div>
+        <script>
+        (function () {
+            var input = document.getElementById('match-search');
+            var list = document.getElementById('match-list');
+            var emptyMsg = document.getElementById('match-search-empty');
+            if (!input || !list) {
+                return;
+            }
+            input.addEventListener('input', function () {
+                var q = input.value.trim().toLowerCase();
+                var visible = 0;
+                list.querySelectorAll('.match-list-item').forEach(function (item) {
+                    var hay = item.getAttribute('data-search') || '';
+                    var show = q === '' || hay.indexOf(q) !== -1;
+                    item.classList.toggle('d-none', !show);
+                    if (show) {
+                        visible++;
+                    }
+                });
+                if (emptyMsg) {
+                    emptyMsg.classList.toggle('d-none', q === '' || visible > 0);
+                }
+            });
+        })();
+        </script>
     <?php endif; ?>
 
     <div class="card bonus-card mt-4">

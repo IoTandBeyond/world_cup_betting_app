@@ -157,6 +157,40 @@ if (!function_exists('match_stage_label')) {
     }
 }
 
+if (!function_exists('match_venue_label')) {
+    /** Stadium and host country for display (e.g. "MetLife Stadium · United States"). */
+    function match_venue_label(array $match): string
+    {
+        $parts = array_filter([
+            $match['venue'] ?? null,
+            $match['venue_country'] ?? null,
+        ], static fn ($v) => $v !== null && $v !== '');
+
+        return implode(' · ', $parts);
+    }
+}
+
+if (!function_exists('match_search_text')) {
+    /** Lowercase string used for client-side match filtering. */
+    function match_search_text(array $match): string
+    {
+        $parts = [
+            $match['home_team_name'] ?? '',
+            $match['away_team_name'] ?? '',
+            $match['home_short_name'] ?? '',
+            $match['away_short_name'] ?? '',
+            $match['home_fifa_code'] ?? '',
+            $match['away_fifa_code'] ?? '',
+            $match['group_name'] ?? '',
+            match_stage_label($match['stage'] ?? ''),
+            $match['venue'] ?? '',
+            $match['venue_country'] ?? '',
+        ];
+
+        return strtolower(preg_replace('/\s+/', ' ', trim(implode(' ', $parts))));
+    }
+}
+
 if (!function_exists('app_timezone')) {
     /** IANA timezone for match kickoffs and display (e.g. America/Toronto). */
     function app_timezone(): string

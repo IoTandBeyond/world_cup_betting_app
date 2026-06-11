@@ -136,6 +136,23 @@ body.player-app {
     align-items: center;
 }
 
+.match-card__venue {
+    padding: 0.35rem 1rem 0;
+    font-size: 0.75rem;
+    color: var(--pool-muted);
+}
+
+.match-search-bar .input-group-text {
+    background: #f8faf9;
+    border-color: #dee2e6;
+    color: var(--pool-muted);
+}
+
+.match-search-bar .form-control:focus {
+    border-color: var(--pool-green);
+    box-shadow: 0 0 0 0.2rem rgba(9, 77, 42, 0.15);
+}
+
 .match-card__teams {
     display: flex;
     align-items: center;

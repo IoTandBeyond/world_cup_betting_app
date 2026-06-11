@@ -26,6 +26,9 @@ Upload a `.csv` file (max 2 MB) with a header row:
 | `stage` | Yes | `group` |
 | `group_name` | No | `A` |
 | `venue` | No | `MetLife Stadium` |
+| `country` | No | `United States` |
+
+`stadium` and `venue_country` are accepted aliases for `venue` and `country`.
 
 ### Accepted header aliases
 
@@ -56,9 +59,9 @@ Bets lock when kickoff time passes in that timezone, not server UTC.
 Download from the Matches page or use `samples/matches_template.csv` in the project root.
 
 ```csv
-home_fifa,away_fifa,kickoff_at,stage,group_name,venue
-BRA,GER,2026-06-15 14:00:00,group,A,MetLife Stadium
-ARG,FRA,2026-06-16 17:00:00,group,B,SoFi Stadium
+home_fifa,away_fifa,kickoff_at,stage,group_name,venue,country
+BRA,GER,2026-06-15 14:00:00,group,A,MetLife Stadium,United States
+ARG,FRA,2026-06-16 17:00:00,group,B,SoFi Stadium,United States
 ```
 
 ## Behaviour

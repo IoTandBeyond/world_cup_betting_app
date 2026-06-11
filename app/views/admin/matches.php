@@ -31,7 +31,7 @@ ob_start();
                 <code>away_fifa</code>,
                 <code>kickoff_at</code>,
                 <code>stage</code>.
-                Optional: <code>group_name</code>, <code>venue</code>.
+                Optional: <code>group_name</code>, <code>venue</code> (or <code>stadium</code>), <code>country</code>.
             </p>
             <form method="POST"
                   action="<?= url('/admin/matches/import') ?>"
@@ -86,6 +86,7 @@ ob_start();
                     <th>Group</th>
                     <th>Kickoff</th>
                     <th>Venue</th>
+                    <th>Country</th>
                     <th>Status</th>
                     <th>Predictions</th>
                 </tr>
@@ -98,6 +99,7 @@ ob_start();
                         <td><?= e($m['group_name']) ?></td>
                         <td><?= e($m['kickoff_at']) ?></td>
                         <td><?= e($m['venue'] ?? '—') ?></td>
+                        <td><?= e($m['venue_country'] ?? '—') ?></td>
                         <td><?= e($m['status']) ?></td>
                         <td>
                             <form method="POST" action="<?= url('/admin/matches/toggle-predictions') ?>" class="d-inline">
@@ -114,7 +116,7 @@ ob_start();
                 <?php endforeach; ?>
                 <?php if (empty($matches)): ?>
                     <tr>
-                        <td colspan="6" class="text-center text-muted py-4">
+                        <td colspan="8" class="text-center text-muted py-4">
                             No matches yet. Upload your CSV file above.
                         </td>
                     </tr>

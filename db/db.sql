@@ -123,6 +123,7 @@ CREATE TABLE matches (
     away_team_id BIGINT UNSIGNED NOT NULL,
     kickoff_at DATETIME NOT NULL,
     venue VARCHAR(150) NULL,
+    venue_country VARCHAR(100) NULL,
     home_score TINYINT NULL,
     away_score TINYINT NULL,
     status ENUM(
