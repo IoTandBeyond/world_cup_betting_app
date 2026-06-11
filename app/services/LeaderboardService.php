@@ -19,21 +19,29 @@ class LeaderboardService
         $stmt = $db->prepare('
             SELECT u.id AS user_id,
                    u.name,
-                   COALESCE(SUM(p.points_awarded), 0)
-                       + COALESCE(MAX(bp.points_awarded), 0) AS total_points,
-                   SUM(CASE
-                       WHEN p.points_awarded = (
-                           SELECT `value` FROM settings
-                           WHERE `key` = "points_exact_score" LIMIT 1
-                       ) THEN 1 ELSE 0 END) AS exact_hits
-            FROM users u
-            LEFT JOIN predictions p ON p.user_id = u.id
-            LEFT JOIN matches m ON m.id = p.match_id
-                AND m.tournament_id = :tid
+                   COALESCE(mp.match_points, 0)
+                       + COALESCE(bp.points_awarded, 0) AS total_points,
+                   COALESCE(mp.exact_hits, 0) AS exact_hits
+            FROM tournament_members tm
+            JOIN users u ON u.id = tm.user_id
+            LEFT JOIN (
+                SELECT p.user_id,
+                       SUM(p.points_awarded) AS match_points,
+                       SUM(CASE
+                           WHEN p.points_awarded = (
+                               SELECT `value` FROM settings
+                               WHERE `key` = "points_exact_score" LIMIT 1
+                           ) THEN 1 ELSE 0 END) AS exact_hits
+                FROM predictions p
+                INNER JOIN matches m ON m.id = p.match_id
+                    AND m.tournament_id = :tid
+                GROUP BY p.user_id
+            ) mp ON mp.user_id = u.id
             LEFT JOIN bonus_predictions bp ON bp.user_id = u.id
                 AND bp.tournament_id = :tid2
-            WHERE u.is_active = 1 AND u.role = "user"
-            GROUP BY u.id, u.name
+            WHERE tm.tournament_id = :tid3
+              AND u.is_active = 1
+              AND u.role = "user"
             ORDER BY total_points DESC,
                      exact_hits DESC,
                      u.name ASC
@@ -42,6 +50,7 @@ class LeaderboardService
         $stmt->execute([
             'tid' => $tournamentId,
             'tid2' => $tournamentId,
+            'tid3' => $tournamentId,
         ]);
 
         $rows = $stmt->fetchAll();
@@ -70,6 +79,8 @@ class LeaderboardService
             SELECT lc.rank_position, lc.total_points, u.name, u.id AS user_id
             FROM leaderboard_cache lc
             JOIN users u ON u.id = lc.user_id
+            JOIN tournament_members tm ON tm.user_id = u.id
+                AND tm.tournament_id = lc.tournament_id
             WHERE lc.tournament_id = :tid
             ORDER BY lc.rank_position ASC
         ');
