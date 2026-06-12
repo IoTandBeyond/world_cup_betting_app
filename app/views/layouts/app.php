@@ -5,6 +5,7 @@ use App\Services\TournamentContext;
 $currentPath = request_path();
 $navItems = [
     '/dashboard' => ['label' => 'My Bets', 'icon' => 'fa-futbol'],
+    '/groups' => ['label' => 'Groups', 'icon' => 'fa-table'],
     '/bonus' => ['label' => 'Bonus', 'icon' => 'fa-star'],
     '/leaderboard' => ['label' => 'Leaderboard', 'icon' => 'fa-ranking-star'],
 ];

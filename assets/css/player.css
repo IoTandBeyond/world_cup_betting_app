@@ -292,6 +292,63 @@ body.player-app {
     text-align: center;
 }
 
+.group-standings-card {
+    background: var(--pool-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    height: 100%;
+}
+
+.group-standings-card__head {
+    background: linear-gradient(135deg, var(--pool-green-dark), var(--pool-green));
+    color: #fff;
+    font-weight: 700;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+}
+
+.group-standings-table {
+    font-size: 0.82rem;
+}
+
+.group-standings-table thead th {
+    background: #f8faf9;
+    color: var(--pool-muted);
+    font-weight: 600;
+    border-bottom-width: 1px;
+    white-space: nowrap;
+}
+
+.group-standings-table__team {
+    min-width: 7rem;
+    white-space: nowrap;
+}
+
+.group-standings-table__pos {
+    display: inline-block;
+    width: 1.1rem;
+    color: var(--pool-muted);
+    font-size: 0.75rem;
+}
+
+.group-standings-table__flag {
+    object-fit: cover;
+    border-radius: 2px;
+    vertical-align: -2px;
+    margin-right: 0.25rem;
+}
+
+.group-standings-table__code {
+    font-weight: 700;
+}
+
+.group-standings-table__name {
+    color: var(--pool-muted);
+    font-size: 0.78rem;
+    margin-left: 0.15rem;
+}
+
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;

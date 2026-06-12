@@ -7,6 +7,7 @@ use App\Controllers\PasswordController;
 use App\Controllers\PolicyController;
 use App\Controllers\DashboardController;
 use App\Controllers\HomeController;
+use App\Controllers\GroupsController;
 use App\Controllers\LeaderboardController;
 use App\Controllers\PredictionController;
 use App\Controllers\TournamentController;
@@ -37,6 +38,7 @@ $router->get('/bonus', [BonusController::class, 'index'], [AuthMiddleware::class
 $router->post('/bonus', [BonusController::class, 'save'], [AuthMiddleware::class]);
 $router->post('/predictions', [PredictionController::class, 'save'], [AuthMiddleware::class]);
 $router->get('/leaderboard', [LeaderboardController::class, 'index'], [AuthMiddleware::class]);
+$router->get('/groups', [GroupsController::class, 'index'], [AuthMiddleware::class]);
 
 $router->get('/admin', [AdminController::class, 'dashboard'], [AdminMiddleware::class]);
 $router->get('/admin/invitations', [AdminController::class, 'invitations'], [AdminMiddleware::class]);
