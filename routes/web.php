@@ -53,6 +53,7 @@ $router->post('/admin/tournament/teams', [AdminController::class, 'storeTeam'], 
 $router->post('/admin/tournament/import', [AdminController::class, 'importTeams'], [AdminMiddleware::class]);
 $router->get('/admin/matches', [AdminController::class, 'matches'], [AdminMiddleware::class]);
 $router->post('/admin/matches/import', [AdminController::class, 'importMatches'], [AdminMiddleware::class]);
+$router->post('/admin/matches/update', [AdminController::class, 'updateMatchDetails'], [AdminMiddleware::class]);
 $router->post('/admin/matches/toggle-predictions', [AdminController::class, 'togglePredictions'], [AdminMiddleware::class]);
 $router->get('/admin/results', [AdminController::class, 'results'], [AdminMiddleware::class]);
 $router->post('/admin/results', [AdminController::class, 'saveResult'], [AdminMiddleware::class]);

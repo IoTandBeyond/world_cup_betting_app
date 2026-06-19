@@ -84,22 +84,58 @@ ob_start();
                     <th>Match</th>
                     <th>Stage</th>
                     <th>Group</th>
-                    <th>Kickoff</th>
-                    <th>Venue</th>
-                    <th>Country</th>
+                    <th>Date &amp; venue</th>
                     <th>Status</th>
                     <th>Predictions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($matches as $m): ?>
+                    <?php
+                    $kickoff = date_create($m['kickoff_at'], timezone_open(app_timezone()));
+                    $kickoffValue = $kickoff ? $kickoff->format('Y-m-d\TH:i') : '';
+                    ?>
                     <tr>
                         <td><?= e($m['home_short_name']) ?> vs <?= e($m['away_short_name']) ?></td>
                         <td><?= e(str_replace('_', ' ', $m['stage'])) ?></td>
                         <td><?= e($m['group_name']) ?></td>
-                        <td><?= e($m['kickoff_at']) ?></td>
-                        <td><?= e($m['venue'] ?? '—') ?></td>
-                        <td><?= e($m['venue_country'] ?? '—') ?></td>
+                        <td style="min-width: 28rem;">
+                            <form method="POST"
+                                  action="<?= url('/admin/matches/update') ?>"
+                                  class="row g-2 align-items-end">
+                                <?= \App\Services\Csrf::field() ?>
+                                <input type="hidden" name="match_id" value="<?= (int) $m['id'] ?>">
+                                <div class="col-md-4">
+                                    <label class="form-label small mb-1">Kickoff</label>
+                                    <input type="datetime-local"
+                                           name="kickoff_at"
+                                           class="form-control form-control-sm"
+                                           value="<?= e($kickoffValue) ?>"
+                                           required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Venue</label>
+                                    <input type="text"
+                                           name="venue"
+                                           class="form-control form-control-sm"
+                                           value="<?= e($m['venue'] ?? '') ?>"
+                                           placeholder="Stadium">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small mb-1">Country</label>
+                                    <input type="text"
+                                           name="venue_country"
+                                           class="form-control form-control-sm"
+                                           value="<?= e($m['venue_country'] ?? '') ?>"
+                                           placeholder="Country">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-sm btn-outline-success w-100">
+                                        Save
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
                         <td><?= e($m['status']) ?></td>
                         <td>
                             <form method="POST" action="<?= url('/admin/matches/toggle-predictions') ?>" class="d-inline">
@@ -116,7 +152,7 @@ ob_start();
                 <?php endforeach; ?>
                 <?php if (empty($matches)): ?>
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-4">
+                        <td colspan="6" class="text-center text-muted py-4">
                             No matches yet. Upload your CSV file above.
                         </td>
                     </tr>

@@ -156,6 +156,30 @@ class MatchModel
         ]);
     }
 
+    public static function updateDetails(
+        int $id,
+        string $kickoffAt,
+        ?string $venue,
+        ?string $venueCountry
+    ): void {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            UPDATE matches
+            SET kickoff_at = :kickoff_at,
+                venue = :venue,
+                venue_country = :venue_country
+            WHERE id = :id
+        ');
+
+        $stmt->execute([
+            'id' => $id,
+            'kickoff_at' => $kickoffAt,
+            'venue' => $venue,
+            'venue_country' => $venueCountry,
+        ]);
+    }
+
     public static function exists(
         int $tournamentId,
         int $homeTeamId,

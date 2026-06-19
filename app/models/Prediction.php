@@ -112,6 +112,20 @@ class Prediction
         return $stmt->fetchAll();
     }
 
+    public static function forMatch(int $matchId): array
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            SELECT * FROM predictions
+            WHERE match_id = :match_id
+        ');
+
+        $stmt->execute(['match_id' => $matchId]);
+
+        return $stmt->fetchAll();
+    }
+
     public static function markScored(
         int $id,
         int $points

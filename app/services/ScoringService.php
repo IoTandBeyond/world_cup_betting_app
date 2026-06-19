@@ -27,7 +27,9 @@ class ScoringService
         $away = (int) $match['away_score'];
         $scored = 0;
 
-        foreach (Prediction::unscoredForMatch($matchId) as $prediction) {
+        self::clearMatchPointLogs($matchId);
+
+        foreach (Prediction::forMatch($matchId) as $prediction) {
             $points = self::calculatePoints(
                 $home,
                 $away,
@@ -49,11 +51,23 @@ class ScoringService
             $scored++;
         }
 
-        if ($scored > 0) {
-            LeaderboardService::rebuild((int) $match['tournament_id']);
-        }
+        LeaderboardService::rebuild((int) $match['tournament_id']);
 
         return $scored;
+    }
+
+    private static function clearMatchPointLogs(int $matchId): void
+    {
+        $db = Database::connection();
+
+        $stmt = $db->prepare('
+            DELETE FROM points_log
+            WHERE prediction_id IN (
+                SELECT id FROM predictions WHERE match_id = :match_id
+            )
+        ');
+
+        $stmt->execute(['match_id' => $matchId]);
     }
 
     public static function calculatePoints(

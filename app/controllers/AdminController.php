@@ -364,7 +364,7 @@ class AdminController extends Controller
         $home = (int) ($_POST['home_score'] ?? 0);
         $away = (int) ($_POST['away_score'] ?? 0);
 
-        TournamentAuth::requireMatchInManagedTournament($matchId);
+        $tournamentId = TournamentAuth::requireMatchInManagedTournament($matchId);
 
         MatchModel::updateScore($matchId, $home, $away);
         $scored = ScoringService::scoreMatch($matchId);
@@ -374,7 +374,36 @@ class AdminController extends Controller
             "Result saved. {$scored} prediction(s) scored."
         );
 
-        $this->redirect('/admin/results');
+        $this->redirect(self::adminResultsRedirect($tournamentId));
+    }
+
+    public function updateMatchDetails(): void
+    {
+        Csrf::validateOrAbort();
+
+        $matchId = (int) ($_POST['match_id'] ?? 0);
+        $tournamentId = TournamentAuth::requireMatchInManagedTournament($matchId);
+
+        $kickoffInput = trim($_POST['kickoff_at'] ?? '');
+        $venue = trim($_POST['venue'] ?? '');
+        $venueCountry = trim($_POST['venue_country'] ?? '');
+
+        $kickoff = date_create($kickoffInput, timezone_open(app_timezone()));
+
+        if ($kickoff === false) {
+            Flash::set('error', 'Enter a valid kickoff date and time.');
+            $this->redirect(self::adminMatchesRedirect($tournamentId));
+        }
+
+        MatchModel::updateDetails(
+            $matchId,
+            $kickoff->format('Y-m-d H:i:s'),
+            $venue !== '' ? $venue : null,
+            $venueCountry !== '' ? $venueCountry : null
+        );
+
+        Flash::set('success', 'Match date and venue updated.');
+        $this->redirect(self::adminMatchesRedirect($tournamentId));
     }
 
     public function togglePredictions(): void
@@ -384,12 +413,26 @@ class AdminController extends Controller
         $matchId = (int) ($_POST['match_id'] ?? 0);
         $allowed = (int) ($_POST['allow_predictions'] ?? 0) === 1;
 
-        TournamentAuth::requireMatchInManagedTournament($matchId);
+        $tournamentId = TournamentAuth::requireMatchInManagedTournament($matchId);
 
         MatchModel::setAllowPredictions($matchId, $allowed);
 
         Flash::set('success', 'Prediction lock updated.');
-        $this->redirect('/admin/matches');
+        $this->redirect(self::adminMatchesRedirect($tournamentId));
+    }
+
+    private static function adminMatchesRedirect(int $tournamentId): string
+    {
+        return Auth::isSuperAdmin()
+            ? '/admin/matches?tournament_id=' . $tournamentId
+            : '/admin/matches';
+    }
+
+    private static function adminResultsRedirect(int $tournamentId): string
+    {
+        return Auth::isSuperAdmin()
+            ? '/admin/results?tournament_id=' . $tournamentId
+            : '/admin/results';
     }
 
     public function tournament(): void

@@ -9,7 +9,6 @@ ob_start();
 <?php else: ?>
     <div class="row g-3">
         <?php foreach ($matches as $m): ?>
-            <?php if ($m['status'] === 'finished') continue; ?>
             <div class="col-12 col-lg-6">
                 <div class="card shadow-sm">
                     <div class="card-body">
@@ -22,6 +21,11 @@ ob_start();
                                     Group <?= e($m['group_name']) ?>
                                 </span>
                             <?php endif; ?>
+                            <?php if ($m['status'] === 'finished'): ?>
+                                <span class="badge bg-success">Finished</span>
+                            <?php else: ?>
+                                <span class="badge bg-warning text-dark"><?= e($m['status']) ?></span>
+                            <?php endif; ?>
                         </p>
                         <h5 class="mb-2"><?= e($m['home_team_name']) ?> vs <?= e($m['away_team_name']) ?></h5>
                         <p class="small text-muted mb-3">
@@ -32,20 +36,39 @@ ob_start();
                             <input type="hidden" name="match_id" value="<?= (int) $m['id'] ?>">
                             <div class="col-4">
                                 <label class="form-label small">Home</label>
-                                <input type="number" name="home_score" class="form-control" min="0" max="20" required>
+                                <input type="number"
+                                       name="home_score"
+                                       class="form-control"
+                                       min="0"
+                                       max="20"
+                                       required
+                                       value="<?= $m['home_score'] !== null ? (int) $m['home_score'] : '' ?>">
                             </div>
                             <div class="col-4">
                                 <label class="form-label small">Away</label>
-                                <input type="number" name="away_score" class="form-control" min="0" max="20" required>
+                                <input type="number"
+                                       name="away_score"
+                                       class="form-control"
+                                       min="0"
+                                       max="20"
+                                       required
+                                       value="<?= $m['away_score'] !== null ? (int) $m['away_score'] : '' ?>">
                             </div>
                             <div class="col-4">
-                                <button type="submit" class="btn btn-success w-100">Save &amp; score</button>
+                                <button type="submit" class="btn btn-success w-100">
+                                    <?= $m['status'] === 'finished' ? 'Update score' : 'Save &amp; score' ?>
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         <?php endforeach; ?>
+        <?php if (empty($matches)): ?>
+            <div class="col-12">
+                <div class="alert alert-info">No matches yet. Import fixtures first.</div>
+            </div>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 <?php
