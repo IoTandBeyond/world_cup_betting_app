@@ -347,6 +347,7 @@ class AdminController extends Controller
         if ($tournament) {
             TournamentAuth::requireCanManageTournament($tournamentId);
             $matches = MatchModel::forTournament($tournamentId);
+            self::sortMatchesForResults($matches);
         }
 
         $this->view('admin/results', [
@@ -433,6 +434,28 @@ class AdminController extends Controller
         return Auth::isSuperAdmin()
             ? '/admin/results?tournament_id=' . $tournamentId
             : '/admin/results';
+    }
+
+    /** Scheduled matches first, then by kickoff date within each status group. */
+    private static function sortMatchesForResults(array &$matches): void
+    {
+        $statusPriority = [
+            'scheduled' => 0,
+            'live' => 1,
+            'finished' => 2,
+            'cancelled' => 3,
+        ];
+
+        usort($matches, static function (array $a, array $b) use ($statusPriority): int {
+            $statusCompare = ($statusPriority[$a['status']] ?? 99)
+                <=> ($statusPriority[$b['status']] ?? 99);
+
+            if ($statusCompare !== 0) {
+                return $statusCompare;
+            }
+
+            return strtotime($a['kickoff_at']) <=> strtotime($b['kickoff_at']);
+        });
     }
 
     public function tournament(): void
